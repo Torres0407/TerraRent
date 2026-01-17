@@ -1,2 +1,0 @@
-# TerraRent
-Property Rental Marketplace
