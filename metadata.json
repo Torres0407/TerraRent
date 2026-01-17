@@ -1,0 +1,7 @@
+{
+  "name": "TerraRent",
+  "description": "A premium property rental platform connecting users with nature-inspired, high-quality architectural stays, featuring AI-powered property recommendations and a modern, serene design.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
