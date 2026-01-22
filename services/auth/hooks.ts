@@ -3,7 +3,7 @@ import { handleApiError } from '../../api/client';
 import { LoginRequest, RegisterRequest } from '../../api/types/requests';
 import { UserResponse } from '../../api/types/responses';
 import { authService } from './functions';
-
+ 
 /**
  * Hook for login functionality
  */
@@ -92,7 +92,7 @@ export const useAuth = () => {
     authService.logout();
   };
 
-  const hasRole = (role: 'ROLE_RENTER' | 'ROLE_LANDLORD' | 'ROLE_ADMIN') => {
+  const hasRole = (role: 'RENTER' | 'LANDLORD' | 'ADMIN') => {
     return authService.hasRole(role);
   };
 

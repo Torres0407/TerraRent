@@ -75,7 +75,7 @@ export const authService = {
   /**
    * Check if user has specific role
    */
-  hasRole(role: 'ROLE_RENTER' | 'ROLE_LANDLORD' | 'ROLE_ADMIN'): boolean {
+  hasRole(role: 'RENTER' | 'LANDLORD' | 'ADMIN'): boolean {
     const user = this.getCurrentUser();
     return user?.role === role;
   },

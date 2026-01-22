@@ -11,7 +11,7 @@ export interface UserResponse {
   lastName: string;
   email: string;
   phoneNumber: string;
-  role: 'ROLE_RENTER' | 'ROLE_LANDLORD' | 'ROLE_ADMIN';
+  role: 'RENTER' | 'LANDLORD' | 'ADMIN';
   status: 'PENDING_VERIFICATION' | 'ACTIVE' | 'SUSPENDED' | 'VERIFIED';
 }
 
@@ -60,9 +60,9 @@ export interface PageResponse<T> {
 // Dashboard Response Types
 export interface RenterDashboardResponse {
   savedPropertiesCount: number;
-  bookingsCount: number;
-  applicationsCount: number;
-  toursCount: number;
+  activeApplicationsCount: number;
+  upcomingBookingsCount: number;
+  totalSpent: number;
 }
 
 export interface LandlordDashboardResponse {

@@ -13,7 +13,9 @@ export const LandlordDashboard: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const dashboardData = await landlordApi.getDashboard();
+       const dashboardData = await landlordApi.getDashboard();
+console.log("LANDLORD DASHBOARD API RAW:", dashboardData);
+
         setData(dashboardData);
       } catch (err) {
         console.error("Failed to fetch landlord dashboard data:", err);
@@ -65,6 +67,7 @@ export const LandlordDashboard: React.FC = () => {
     { title: "Active Assets", val: stats.activeProperties, change: "Stable", icon: "house", bg: "#fff7ed", isNeutral: true },
     { title: "New Requests", val: stats.newRequests, change: `+${stats.newRequests} New`, icon: "notifications_active", bg: "#fef2f2" }
   ];
+  
 
   return (
     <LandlordLayout>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { landlordApi } from '../../api/endpoints/landlord';
 import { Property } from '../../types';
 import { LandlordLayout } from './LandlordLayout';
@@ -18,24 +18,40 @@ export const LandlordPricing: React.FC = () => {
   const [pricing, setPricing] = useState<Property['pricing']>(initialPricing);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoadingProperties, setIsLoadingProperties] = useState(false);
 
   useEffect(() => {
-    const fetchPricing = async () => {
-      if (!id) return;
-      try {
-        setIsLoading(true);
-        const prop = await landlordApi.getPropertyById(id);
-        if (prop) {
-          setBaseRate(prop.price);
-          setPricing(prop.pricing || initialPricing);
+    const fetchData = async () => {
+      setIsLoading(true);
+      
+      if (id) {
+        // Load pricing for specific property
+        try {
+          const prop = await landlordApi.getPropertyById(id);
+          if (prop) {
+            setBaseRate(prop.price);
+            setPricing(prop.pricing || initialPricing);
+          }
+        } catch (error) {
+          console.error("Failed to fetch pricing", error);
         }
-      } catch (error) {
-        console.error("Failed to fetch pricing", error);
-      } finally {
-        setIsLoading(false);
+      } else {
+        // Load properties list for selection
+        setIsLoadingProperties(true);
+        try {
+          const props = await landlordApi.getProperties();
+          setProperties(props || []);
+        } catch (error) {
+          console.error("Failed to fetch properties", error);
+        } finally {
+          setIsLoadingProperties(false);
+        }
       }
+      
+      setIsLoading(false);
     };
-    fetchPricing();
+    fetchData();
   }, [id]);
 
   const handlePricingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +74,69 @@ export const LandlordPricing: React.FC = () => {
   };
 
   const netTakehome = (baseRate * 3) + (pricing?.cleaningFee || 0) - ((baseRate*3) * 0.03);
+
+  // Show property selection when no id is provided
+  if (!id) {
+    return (
+      <LandlordLayout>
+        <div className="p-8 md:p-12 max-w-7xl mx-auto space-y-12">
+          <div className="space-y-2">
+            <h1 className="text-5xl font-black text-primary dark:text-white tracking-tighter">Yield Strategy</h1>
+            <p className="text-xl text-text-muted font-medium">Select a property to configure pricing and fees.</p>
+          </div>
+
+          {isLoadingProperties ? (
+            <div className="text-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-text-muted font-semibold">Loading your properties...</p>
+            </div>
+          ) : properties.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-3xl border border-primary/5 shadow-xl">
+              <span className="material-symbols-outlined text-6xl text-primary/20 mb-4">real_estate_agent</span>
+              <h3 className="text-2xl font-black text-primary mb-2">No Properties Found</h3>
+              <p className="text-text-muted mb-6">You need to add properties before configuring pricing.</p>
+              <Link to="/landlord/add-property" className="inline-flex items-center gap-3 bg-primary text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-primary-hover transition-all">
+                <span className="material-symbols-outlined">add</span> Add Your First Property
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {properties.map((prop) => (
+                <Link
+                  key={prop.id}
+                  to={`/landlord/pricing/${prop.id}`}
+                  className="bg-white dark:bg-surface-dark rounded-[2.5rem] border border-primary/5 overflow-hidden shadow-xl shadow-black/[0.02] hover:shadow-2xl transition-all group flex flex-col"
+                >
+                  <div className="relative h-48 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{backgroundImage: `url('${prop.image}')`}}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-white rounded-full text-[9px] font-black text-primary uppercase tracking-widest shadow-lg">
+                      {prop.isSuperhost ? 'Premier Stay' : 'Verified'}
+                    </div>
+                    <div className="absolute bottom-4 right-4 text-white font-black text-lg">
+                      ${prop.price}<span className="text-xs uppercase opacity-70 ml-1">/ night</span>
+                    </div>
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="mb-4">
+                      <h3 className="text-xl font-black text-primary dark:text-white tracking-tighter group-hover:text-accent transition-colors">{prop.title}</h3>
+                      <p className="text-text-muted text-sm font-medium mt-1">{prop.location}</p>
+                    </div>
+                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-primary/5">
+                      <div className="flex items-center gap-1.5 text-accent">
+                        <span className="material-symbols-outlined text-base">star</span>
+                        <span className="text-sm font-black">{prop.rating}</span>
+                      </div>
+                      <span className="text-xs font-black text-primary uppercase tracking-widest">Configure Pricing →</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </LandlordLayout>
+    );
+  }
 
   if (isLoading) {
     return (

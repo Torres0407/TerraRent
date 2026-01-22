@@ -10,7 +10,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   phoneNumber: string;
-  role: 'ROLE_RENTER' | 'ROLE_LANDLORD' | 'ROLE_ADMIN';
+  role: 'RENTER' | 'LANDLORD' | 'ADMIN';
 }
 
 export interface VerifyEmailRequest {

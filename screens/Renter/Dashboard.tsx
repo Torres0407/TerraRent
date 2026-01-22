@@ -163,7 +163,7 @@ export const Dashboard: React.FC = () => {
       <main className="flex-1 h-full overflow-y-auto bg-sand-light/30 relative">
         <div className="sticky top-0 z-20 bg-background-light/90 backdrop-blur-md border-b border-primary/5 px-8 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-extrabold text-primary tracking-tight">Good Morning, {dashboardData?.user.firstname}</h2>
+            <h2 className="text-3xl font-extrabold text-primary tracking-tight">Good Morning, {dashboardData?.firstName}</h2>
             <p className="text-text-muted font-medium">Here's what's happening with your home search.</p>
           </div>
           <div className="w-full md:w-96">
@@ -195,20 +195,19 @@ export const Dashboard: React.FC = () => {
             </div>
           </section>
           
+...
           <section>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <h3 className="text-xl font-bold text-primary">Saved Homes</h3>
-                {dashboardData?.savedProperties && (
-                  <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-0.5 rounded-full">
-                    {dashboardData.savedProperties.length}
-                  </span>
-                )}
+                <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-0.5 rounded-full">
+                  {dashboardData?.savedProperties?.length ?? 0}
+                </span>
               </div>
               <Link to="/saved" className="text-sm font-semibold text-accent hover:text-primary transition-colors">See all</Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {dashboardData?.savedProperties.map((prop) => (
+              {(dashboardData?.savedProperties ?? []).map((prop) => (
                 <Link key={prop.id} to={`/property-details/${prop.id}`} className="group bg-white rounded-2xl border border-primary/5 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer block">
                   <div className="aspect-[4/3] bg-cover bg-center relative" style={{ backgroundImage: `url('${prop.image}')` }}>
                     <div className="absolute bottom-3 left-3 bg-primary/80 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded-md">${prop.price} / night</div>
@@ -219,13 +218,15 @@ export const Dashboard: React.FC = () => {
                   </div>
                 </Link>
               ))}
-              {(!dashboardData?.savedProperties || dashboardData.savedProperties.length === 0) && (
+              {!(dashboardData?.savedProperties?.length) && (
                  <div className="md:col-span-2 lg:col-span-3 text-center p-10 bg-white rounded-2xl border border-primary/5">
                    <p className="font-medium text-text-muted">You haven't saved any homes yet.</p>
                  </div>
               )}
             </div>
           </section>
+...
+
         </div>
       </main>
     </div>

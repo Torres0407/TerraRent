@@ -10,9 +10,23 @@ export const landlordApi = {
    * Get landlord dashboard metrics
    * GET /api/landlord/dashboard/metrics
    */
-  getDashboard: () => 
-    api.get<LandlordDashboardResponse>('/landlord/dashboard/metrics'),
-  
+getDashboard: async () => {
+  const res = await api.get('/landlord/dashboard/metrics');
+
+  return {
+    user: { firstname: 'Landlord', lastname: '' }, // default user
+    stats: {
+      totalRevenue: res.data.totalRevenue || 0,
+      occupancyRate: res.data.occupancyRate || 0,
+      totalProperties: res.data.totalProperties || 0,
+      activeListings: res.data.activeListings || 0,
+    },
+    liveBookings: res.data.liveBookings || [],
+    priorityActions: res.data.priorityActions || [],
+  };
+},
+
+
   // Keep the old method for backward compatibility
   getDashboardMetrics: () => 
     api.get<LandlordDashboardResponse>('/landlord/dashboard/metrics'),
@@ -21,22 +35,30 @@ export const landlordApi = {
    * Get landlord's properties
    * GET /api/landlord/properties
    */
-  getProperties: () => 
-    api.get<PropertyResponse[]>('/landlord/properties'),
+  getProperties: async () => {
+    const res = await api.get('/landlord/properties');
+    return res.data;
+  },
 
   /**
    * Get a single property by ID
    * GET /api/landlord/properties/{id}
    */
-  getPropertyById: (id: string | number) => 
-    api.get<PropertyResponse>(`/landlord/properties/${id}`),
+  getPropertyById: async (id: string | number) => {
+    const res = await api.get(`/landlord/properties/${id}`);
+    return res.data;
+  },
 
   /**
    * Create a new property listing
    * POST /api/landlord/properties
    */
-  createProperty: (data: Partial<PropertyResponse>) => 
-    api.post<PropertyResponse>('/landlord/properties', data),
+createProperty: (data: Partial<PropertyResponse>) => {
+  const token = localStorage.getItem('token');
+  return api.post<PropertyResponse>('/landlord/properties', data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+},
 
   /**
    * Update a property
@@ -88,6 +110,8 @@ export const landlordApi = {
    * Get booking requests
    * GET /api/landlord/requests
    */
-  getBookingRequests: () => 
-    api.get<BookingResponse[]>('/landlord/requests'),
+  getBookingRequests: async () => {
+    const res = await api.get('/landlord/requests');
+    return res.data;
+  },
 };

@@ -113,11 +113,17 @@ export interface ApplicationStatus {
 }
 
 export interface RenterDashboardData {
-  user: User;
-  upcomingBooking?: Booking;
-  applicationStatus?: ApplicationStatus;
-  savedProperties: Property[];
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+
+  savedPropertiesCount: number;
+  bookingsCount: number;
+  applicationsCount: number;
+  toursCount: number;
 }
+
 
 // --- Landlord Types ---
 

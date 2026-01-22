@@ -1,9 +1,9 @@
 import { landlordApi } from '../../api/endpoints/landlord';
 import { myPropertiesApi } from '../../api/endpoints/myProperties';
 import {
-    BookingResponse,
-    LandlordDashboardResponse,
-    PropertyResponse
+  BookingResponse,
+  LandlordDashboardResponse,
+  PropertyResponse
 } from '../../api/types/responses';
 
 /**
@@ -23,9 +23,10 @@ export const landlordService = {
    * Get all properties owned by landlord
    */
   async getProperties(): Promise<PropertyResponse[]> {
-    const response = await myPropertiesApi.getAll();
-    return response.data;
-  },
+  const response = await myPropertiesApi.getAll();
+  return response.data.content; // ✅ FIX
+},
+
 
   /**
    * Get single property by ID

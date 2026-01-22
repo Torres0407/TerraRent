@@ -1,30 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import { useLandlordProperties } from '@/services/landlord/hooks';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { landlordApi } from '../../api/endpoints/landlord';
-import { Property } from '../../types';
 import { LandlordLayout } from './LandlordLayout';
 
 export const LandlordProperties: React.FC = () => {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const { properties, loading: isLoading, error } = useLandlordProperties();
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await landlordApi.getProperties();
-        setProperties(data);
-      } catch (err) {
-        console.error("Failed to fetch landlord properties:", err);
-        setError("Failed to load properties.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProperties();
-  }, []);
+useEffect(() => {
+  console.log('properties:', properties);
+  console.log('isArray:', Array.isArray(properties));
+}, [properties]);
+
+
+  
+  // const [properties, setProperties] = useState<Property[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
+
+
+  // useEffect(() => {
+  //   const fetchProperties = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       setError(null);
+  //       const data = await landlordApi.getProperties();
+  //       setProperties(data);
+  //     } catch (err) {
+  //       console.error("Failed to fetch landlord properties:", err);
+  //       setError("Failed to load properties.");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchProperties();
+  // }, []);
 
   return (
     <LandlordLayout>

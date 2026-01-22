@@ -1,55 +1,55 @@
 
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Route, HashRouter as Router, Routes } from 'react-router-dom';
+import { AIChatBot } from './components/AIChatBot';
 import { Layout } from './components/Layout';
+import { AmenitiesPage } from './screens/AmenitiesPage';
 import { HomePage } from './screens/HomePage';
-import { SearchPage } from './screens/SearchPage';
+import { ImageServicesPage } from './screens/ImageServicesPage';
 import { MapPage } from './screens/MapPage';
 import { PropertyDetails } from './screens/PropertyDetails';
-import { AmenitiesPage } from './screens/AmenitiesPage';
-import { ImageServicesPage } from './screens/ImageServicesPage';
+import { SearchPage } from './screens/SearchPage';
 import { StaticPages } from './screens/StaticPages';
-import { AIChatBot } from './components/AIChatBot';
 
 // Auth Screens
 import { AccountSelection } from './screens/Auth/AccountSelection';
-import { SignupRenter } from './screens/Auth/SignupRenter';
-import { SignupLandlord } from './screens/Auth/SignupLandlord';
-import { Login } from './screens/Auth/Login';
-import { VerifyEmail } from './screens/Auth/VerifyEmail';
 import { ForgotPassword } from './screens/Auth/ForgotPassword';
+import { Login } from './screens/Auth/Login';
 import { ResetPassword } from './screens/Auth/ResetPassword';
+import { SignupLandlord } from './screens/Auth/SignupLandlord';
+import { SignupRenter } from './screens/Auth/SignupRenter';
+import { VerifyEmail } from './screens/Auth/VerifyEmail';
 
 // Renter Screens
-import { Dashboard as RenterDashboard } from './screens/Renter/Dashboard';
-import { SavedProperties } from './screens/Renter/SavedProperties';
-import { RecentlyViewed } from './screens/Renter/RecentlyViewed';
-import { Compare } from './screens/Renter/Compare';
-import { Booking } from './screens/Renter/Booking';
 import { Application } from './screens/Renter/Application';
-import { ScheduleTour } from './screens/Renter/ScheduleTour';
+import { Booking } from './screens/Renter/Booking';
 import { Chat } from './screens/Renter/Chat';
+import { Compare } from './screens/Renter/Compare';
+import { Dashboard as RenterDashboard } from './screens/Renter/Dashboard';
 import { Negotiation } from './screens/Renter/Negotiation';
+import { RecentlyViewed } from './screens/Renter/RecentlyViewed';
+import { SavedProperties } from './screens/Renter/SavedProperties';
+import { ScheduleTour } from './screens/Renter/ScheduleTour';
 
 // Landlord Screens
-import { LandlordDashboard } from './screens/Landlord/Dashboard';
-import { LandlordProperties } from './screens/Landlord/Properties';
 import { LandlordAddProperty } from './screens/Landlord/AddProperty';
+import { LandlordAnalytics } from './screens/Landlord/Analytics';
+import { LandlordApplications } from './screens/Landlord/Applications';
+import { LandlordCalendar } from './screens/Landlord/Calendar';
+import { LandlordDashboard } from './screens/Landlord/Dashboard';
 import { LandlordEditProperty } from './screens/Landlord/EditProperty';
 import { LandlordMedia } from './screens/Landlord/MediaManager';
-import { LandlordCalendar } from './screens/Landlord/Calendar';
 import { LandlordPricing } from './screens/Landlord/Pricing';
+import { LandlordProperties } from './screens/Landlord/Properties';
 import { LandlordRequests } from './screens/Landlord/Requests';
-import { LandlordApplications } from './screens/Landlord/Applications';
-import { LandlordAnalytics } from './screens/Landlord/Analytics';
 
 // Admin Screens
 import { AdminDashboard } from './screens/Admin/Dashboard';
-import { AdminUsers } from './screens/Admin/Users';
-import { AdminVerification } from './screens/Admin/Verification';
+import { AdminFeatured } from './screens/Admin/Featured';
 import { AdminProperties } from './screens/Admin/Properties';
 import { AdminReports } from './screens/Admin/Reports';
-import { AdminFeatured } from './screens/Admin/Featured';
+import { AdminUsers } from './screens/Admin/Users';
+import { AdminVerification } from './screens/Admin/Verification';
 
 const App: React.FC = () => {
   return (
@@ -93,10 +93,10 @@ const App: React.FC = () => {
           <Route path="/landlord/dashboard" element={<LandlordDashboard />} />
           <Route path="/landlord/properties" element={<LandlordProperties />} />
           <Route path="/landlord/add-property" element={<LandlordAddProperty />} />
-          <Route path="/landlord/edit-property/:id" element={<LandlordEditProperty />} />
-          <Route path="/landlord/media/:id" element={<LandlordMedia />} />
-          <Route path="/landlord/calendar/:id" element={<LandlordCalendar />} />
-          <Route path="/landlord/pricing/:id" element={<LandlordPricing />} />
+          <Route path="/landlord/edit-property/:id?" element={<LandlordEditProperty />} />
+          <Route path="/landlord/media/:id?" element={<LandlordMedia />} />
+          <Route path="/landlord/calendar/:id?" element={<LandlordCalendar />} />
+          <Route path="/landlord/pricing/:id?" element={<LandlordPricing />} />
           <Route path="/landlord/requests" element={<LandlordRequests />} />
           <Route path="/landlord/applications" element={<LandlordApplications />} />
           <Route path="/landlord/analytics" element={<LandlordAnalytics />} />
