@@ -26,9 +26,9 @@ export const LandlordAddProperty: React.FC = () => {
   
   // Pricing
   const [pricePerNight, setPricePerNight] = useState('');
-const [nightDeposit, setNightDeposit] = useState('');
-const [pricePerYear, setPricePerYear] = useState('');
-const [annualDeposit, setAnnualDeposit] = useState('');
+  const [nightDeposit, setNightDeposit] = useState('');
+  const [pricePerYear, setPricePerYear] = useState('');
+  const [annualDeposit, setAnnualDeposit] = useState('');
   
   // Amenities
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
@@ -37,16 +37,15 @@ const [annualDeposit, setAnnualDeposit] = useState('');
   const [error, setError] = useState('');
 
   const amenitiesList = [
-  { id: 'b1c2d3e4-f5a6-7890-1234-567890abcdef', label: 'WiFi', icon: 'wifi' },
-  { id: 'c2d3e4f5-a6b7-8901-2345-67890abcdef1', label: 'Parking', icon: 'local_parking' },
-  { id: 'd3e4f5a6-b7c8-9012-3456-7890abcdef12', label: 'Kitchen', icon: 'kitchen' },
-  { id: 'e4f5a6b7-c8d9-0123-4567-890abcdef123', label: 'Washer', icon: 'local_laundry_service' },
-  { id: 'f5a6b7c8-d901-2345-6789-0abcdef12345', label: 'Air Conditioning', icon: 'ac_unit' },
-  { id: 'a6b7c8d9-0123-4567-890a-bcdef1234567', label: 'Heating', icon: 'heat' },
-  { id: 'b7c8d901-2345-6789-0abc-def123456789', label: 'Pool', icon: 'pool' },
-  { id: 'c8d90123-4567-890a-bcde-f1234567890a', label: 'Gym', icon: 'fitness_center' },
-];
-
+    { id: 'b1c2d3e4-f5a6-7890-1234-567890abcdef', label: 'WiFi', icon: 'wifi' },
+    { id: 'c2d3e4f5-a6b7-8901-2345-67890abcdef1', label: 'Parking', icon: 'local_parking' },
+    { id: 'd3e4f5a6-b7c8-9012-3456-7890abcdef12', label: 'Kitchen', icon: 'kitchen' },
+    { id: 'e4f5a6b7-c8d9-0123-4567-890abcdef123', label: 'Washer', icon: 'local_laundry_service' },
+    { id: 'f5a6b7c8-d901-2345-6789-0abcdef12345', label: 'Air Conditioning', icon: 'ac_unit' },
+    { id: 'a6b7c8d9-0123-4567-890a-bcdef1234567', label: 'Heating', icon: 'heat' },
+    { id: 'b7c8d901-2345-6789-0abc-def123456789', label: 'Pool', icon: 'pool' },
+    { id: 'c8d90123-4567-890a-bcde-f1234567890a', label: 'Gym', icon: 'fitness_center' },
+  ];
 
   const propertyTypes = [
     { value: 'APARTMENT', label: 'Apartment' },
@@ -66,63 +65,122 @@ const [annualDeposit, setAnnualDeposit] = useState('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError('');
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
-  // Frontend validation
-  if (!title.trim()) { setError('Property title is required'); setIsLoading(false); return; }
-  if (!description.trim()) { setError('Property description is required'); setIsLoading(false); return; }
-  if (!address.trim() || !city.trim() || !country.trim()) { setError('Complete address is required'); setIsLoading(false); return; }
-  if (!pricePerYear || parseFloat(pricePerYear) <= 0) { setError('Annual price is required and must be greater than 0'); setIsLoading(false); return; }
-  if (pricePerNight && parseFloat(pricePerNight) <= 0) { setError('Nightly price must be greater than 0'); setIsLoading(false); return; }
-
-  try {
-    const location = `${address}, ${city}, ${state}, ${zipCode}, ${country}`.replace(/, ,/g, ',').trim();
-
-    const propertyData = {
-      title: title.trim(),
-      description: description.trim(),
-      address: address.trim(),
-      city: city.trim(),
-      state: state.trim(),
-      zipCode: zipCode.trim(),
-      country: country.trim(),
-      location, // optional if backend uses it
-      bedrooms,
-      bathrooms,
-      propertyType,
-      
-      // Pricing
-      nightlyPrice: pricePerNight ? parseFloat(pricePerNight) : undefined, // optional
-      annualPrice: parseFloat(pricePerYear), // required
-
-      // Amenities & images
-      amenityIds: selectedAmenities, // match backend DTO
-      imageUrls: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000'],
-
-      // Optional fields
-      maxGuests,
-      squareFeet: squareFeet ? parseFloat(squareFeet) : undefined,
-    };
-
-    console.log('Sending property data:', propertyData);
-
-    const newProperty = await landlordApi.createProperty(propertyData);
-    navigate(`/landlord/media/${newProperty.id}`);
-  } catch (err: any) {
-    console.error('Error creating property:', err);
-    const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to create property.';
-    setError(errorMessage);
-
-    if (err.response?.data) {
-      console.error('Backend error details:', err.response.data);
+    // Frontend validation
+    if (!title.trim()) {
+      setError('Property title is required');
+      setIsLoading(false);
+      return;
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+    
+    if (!description.trim()) {
+      setError('Property description is required');
+      setIsLoading(false);
+      return;
+    }
+    
+    if (!address.trim() || !city.trim() || !country.trim()) {
+      setError('Complete address is required (address, city, and country)');
+      setIsLoading(false);
+      return;
+    }
 
+    // Validate at least one pricing option
+    const hasNightlyPrice = pricePerNight && !isNaN(parseFloat(pricePerNight)) && parseFloat(pricePerNight) > 0;
+    const hasAnnualPrice = pricePerYear && !isNaN(parseFloat(pricePerYear)) && parseFloat(pricePerYear) > 0;
+
+    if (!hasNightlyPrice && !hasAnnualPrice) {
+      setError('Please provide at least one pricing option (nightly or annual)');
+      setIsLoading(false);
+      return;
+    }
+
+    if (pricePerNight && parseFloat(pricePerNight) <= 0) {
+      setError('Nightly price must be greater than 0');
+      setIsLoading(false);
+      return;
+    }
+
+    if (pricePerYear && parseFloat(pricePerYear) <= 0) {
+      setError('Annual price must be greater than 0');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const location = `${address}, ${city}${state ? ', ' + state : ''}${zipCode ? ', ' + zipCode : ''}, ${country}`.trim();
+
+      const propertyData: any = {
+        title: title.trim(),
+        description: description.trim(),
+        address: address.trim(),
+        city: city.trim(),
+        state: state.trim() || null,
+        zipCode: zipCode.trim() || null,
+        country: country.trim(),
+        location,
+        bedrooms: Number(bedrooms),
+        bathrooms: Number(bathrooms),
+        propertyType,
+        maxGuests: Number(maxGuests),
+        amenityIds: selectedAmenities,
+        imageUrls: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000'],
+          nightlyPrice: hasNightlyPrice ? parseFloat(pricePerNight) : undefined,
+  annualPrice: hasAnnualPrice ? parseFloat(pricePerYear) : undefined,
+  nightlyDeposit: nightDeposit ? parseFloat(nightDeposit) : undefined,
+  annualDeposit: annualDeposit ? parseFloat(annualDeposit) : undefined,
+  squareFeet: squareFeet ? parseFloat(squareFeet) : undefined,
+      };
+
+      // Add pricing fields only if they have values
+      if (hasNightlyPrice) {
+        propertyData.nightlyPrice = parseFloat(pricePerNight);
+      }
+      
+      if (hasAnnualPrice) {
+        propertyData.annualPrice = parseFloat(pricePerYear);
+      }
+
+      // Add deposits if provided
+      if (nightDeposit && parseFloat(nightDeposit) > 0) {
+        propertyData.nightlyDeposit = parseFloat(nightDeposit);
+      }
+
+      if (annualDeposit && parseFloat(annualDeposit) > 0) {
+        propertyData.annualDeposit = parseFloat(annualDeposit);
+      }
+
+      // Add square feet if provided
+      if (squareFeet && parseFloat(squareFeet) > 0) {
+        propertyData.squareFeet = parseFloat(squareFeet);
+      }
+
+      console.log('Sending property data:', propertyData);
+
+      const newProperty = await landlordApi.createProperty(propertyData);
+      if (!newProperty || !newProperty.id) {
+  setError('Failed to create property: No ID received from server');
+  return;
+}
+      navigate(`/landlord/media/${newProperty.id}`);
+    } catch (err: any) {
+      console.error('Error creating property:', err);
+      const errorMessage = err.response?.data?.message 
+        || err.response?.data?.error 
+        || err.message 
+        || 'Failed to create property. Please try again.';
+      setError(errorMessage);
+
+      if (err.response?.data) {
+        console.error('Backend error details:', err.response.data);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <LandlordLayout>
@@ -344,6 +402,7 @@ const [annualDeposit, setAnnualDeposit] = useState('');
                     onChange={(e) => setSquareFeet(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
                     placeholder="1200"
+                    min="0"
                   />
                 </div>
               </div>
@@ -356,68 +415,71 @@ const [annualDeposit, setAnnualDeposit] = useState('');
                 Pricing
               </h2>
               
+              <p className="text-sm text-text-muted mb-5">Provide at least one pricing option (nightly or annual)</p>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-    {/* Nightly Price */}
-    <div>
-      <label className="block text-sm font-bold text-primary mb-2">
-        Price per Night ($) *
-      </label>
-      <input
-        type="number"
-        step="0.01"
-        value={pricePerNight}
-        onChange={(e) => setPricePerNight(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
-        placeholder="150.00"
-        required
-      />
-    </div>
+                {/* Nightly Price */}
+                <div>
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Price per Night ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={pricePerNight}
+                    onChange={(e) => setPricePerNight(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+                    placeholder="150.00"
+                  />
+                </div>
 
-    <div>
-      <label className="block text-sm font-bold text-primary mb-2">
-        Nightly Security Deposit ($)
-      </label>
-      <input
-        type="number"
-        step="0.01"
-        value={nightDeposit}
-        onChange={(e) => setNightDeposit(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
-        placeholder="500.00"
-      />
-    </div>
+                <div>
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Nightly Security Deposit ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={nightDeposit}
+                    onChange={(e) => setNightDeposit(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+                    placeholder="500.00"
+                  />
+                </div>
 
-    {/* Annual Price */}
-    <div>
-      <label className="block text-sm font-bold text-primary mb-2">
-        Price Annually ($) *
-      </label>
-      <input
-        type="number"
-        step="0.01"
-        value={pricePerYear}
-        onChange={(e) => setPricePerYear(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
-        placeholder="18000.00"
-        required
-      />
-    </div>
+                {/* Annual Price */}
+                <div>
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Price Annually ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={pricePerYear}
+                    onChange={(e) => setPricePerYear(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+                    placeholder="18000.00"
+                  />
+                </div>
 
-    <div>
-      <label className="block text-sm font-bold text-primary mb-2">
-        Annual Security Deposit ($)
-      </label>
-      <input
-        type="number"
-        step="0.01"
-        value={annualDeposit}
-        onChange={(e) => setAnnualDeposit(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
-        placeholder="2000.00"
-      />
-    </div>
-  </div>
-             
+                <div>
+                  <label className="block text-sm font-bold text-primary mb-2">
+                    Annual Security Deposit ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={annualDeposit}
+                    onChange={(e) => setAnnualDeposit(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-accent focus:border-accent transition-all"
+                    placeholder="2000.00"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Amenities */}

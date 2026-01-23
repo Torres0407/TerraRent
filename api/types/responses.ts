@@ -21,7 +21,8 @@ export interface PropertyResponse {
   title: string;
   description: string;
   address: string;
-  price: number;
+  annualPrice: number;
+  nightlyPrice?: number;
   bedrooms: number;
   bathrooms: number;
   type?: string;
