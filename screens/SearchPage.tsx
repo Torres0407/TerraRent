@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { PropertyCard } from '../components/PropertyCard';
 import { useDebounce } from '../hooks/useDebounce';
 import { useProperties } from '../services/properties/hooks';
 
 export const SearchPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [params] = useSearchParams();
+const initialLocation = params.get('location') || '';
+  const [searchQuery, setSearchQuery] = useState(initialLocation);
   const [filters, setFilters] = useState({
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
     minBedrooms: undefined as number | undefined,
   });
+  
 
   // Debounce search query to avoid too many API calls
   const debouncedSearch = useDebounce(searchQuery, 500);

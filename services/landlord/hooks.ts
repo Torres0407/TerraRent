@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { handleApiError } from '../../api/client';
 import {
-    BookingResponse,
-    LandlordDashboardResponse,
-    PropertyResponse
+  BookingResponse,
+  LandlordDashboardResponse,
+  PropertyResponse
 } from '../../api/types/responses';
 import { landlordService } from './functions';
 

@@ -1,11 +1,14 @@
-
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../services/auth/hooks';
+
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout, hasRole } = useAuth();
+
 
   const isActive = (path: string) => 
     location.pathname === path ? "text-accent font-bold" : "text-primary hover:text-accent font-semibold";
@@ -36,19 +39,56 @@ const Navigation = () => {
           <Link to="/about" className={`text-sm transition-colors ${isActive('/about')}`}>About</Link>
           <Link to="/faq" className={`text-sm transition-colors ${isActive('/faq')}`}>FAQ</Link>
           <Link to="/contact" className={`text-sm transition-colors ${isActive('/contact')}`}>Contact</Link>
-          <div className="h-6 w-px bg-gray-200 mx-2"></div>
-          <button 
-            onClick={() => navigate('/login')}
-            className="text-sm font-semibold text-primary hover:text-accent transition-colors"
-          >
-            Sign In
-          </button>
-          <button 
-            onClick={() => navigate('/select-account')}
-            className="flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-hover hover:shadow-xl hover:-translate-y-0.5"
-          >
-            Sign Up
-          </button>
+    <div className="h-6 w-px bg-gray-200 mx-2"></div>
+
+{!isAuthenticated ? (
+  <>
+    <button
+      onClick={() => navigate('/login')}
+      className="text-sm font-semibold text-primary hover:text-accent transition-colors"
+    >
+      Sign In
+    </button>
+    <button
+      onClick={() => navigate('/select-account')}
+      className="flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:bg-primary-hover"
+    >
+      Sign Up
+    </button>
+  </>
+) : (
+  <div className="relative group">
+    <button className="flex items-center gap-2">
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white font-bold">
+        {user?.firstName?.[0] ?? 'U'}
+      </div>
+      <span className="text-sm font-semibold text-primary">
+        {user?.firstName}
+      </span>
+    </button>
+
+    {/* Dropdown */}
+    <div className="absolute right-0 mt-3 hidden w-48 rounded-xl bg-white shadow-lg group-hover:block overflow-hidden">
+      {hasRole('LANDLORD') && (
+        <Link to="/landlord/dashboard" className="block px-4 py-3 hover:bg-gray-50">
+          Landlord Dashboard
+        </Link>
+      )}
+
+      <Link to="/dashboard" className="block px-4 py-3 hover:bg-gray-50">
+        My Account
+      </Link>
+
+      <button
+        onClick={logout}
+        className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+)}
+
         </nav>
 
         <button className="md:hidden flex items-center text-primary" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -63,8 +103,27 @@ const Navigation = () => {
               {path.replace('/', '').replace(/-/g, ' ')}
             </Link>
           ))}
-          <Link to="/login" className="text-base font-bold text-accent" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-          <Link to="/select-account" className="text-base font-bold text-primary" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+         {!isAuthenticated ? (
+  <>
+    <Link to="/login" className="font-bold text-accent">Sign In</Link>
+    <Link to="/select-account" className="font-bold text-primary">Sign Up</Link>
+  </>
+) : (
+  <>
+    <Link to="/dashboard" className="font-bold text-primary">My Account</Link>
+    {hasRole('LANDLORD') && (
+      <Link to="/landlord/dashboard" className="font-bold text-primary">
+        Landlord Dashboard
+      </Link>
+    )}
+    <button
+      onClick={logout}
+      className="text-left font-bold text-red-600"
+    >
+      Logout
+    </button>
+  </>
+)}
         </div>
       )}
     </header>

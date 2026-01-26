@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertyCard } from '../components/PropertyCard';
 import { TRUST_INDICATORS } from '../constants';
-import { useFeaturedProperties } from '../services/properties/hooks';
+import { useProperties } from '../services/properties/hooks';
+
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  
-  // Use the new hook - automatically handles loading, error, and data
-  const { properties, loading: isLoading, error } = useFeaturedProperties();
+  const [location, setLocation] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+const { properties } = useProperties( { status: 'PUBLISHED' }, 0,8);
+
 
   return (
     <main className="flex-grow">
@@ -35,25 +38,28 @@ export const HomePage: React.FC = () => {
                 <span className="material-symbols-outlined text-accent mr-3">search</span>
                 <div className="flex w-full flex-col text-left">
                   <label className="text-xs font-bold text-primary uppercase" htmlFor="location">Location</label>
-                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" id="location" placeholder="Where do you want to go?" type="text"/>
+                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  placeholder="Where do you want to go?" type="text"/>
                 </div>
               </div>
               <div className="relative flex flex-1 items-center border-b border-gray-100 px-6 py-3 sm:border-b-0 sm:border-r">
                 <span className="material-symbols-outlined text-accent mr-3">calendar_month</span>
                 <div className="flex w-full flex-col text-left">
                   <label className="text-xs font-bold text-primary uppercase">Dates</label>
-                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" placeholder="Add dates" type="text"/>
+                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" placeholder="Add dates" type="date"/>
                 </div>
               </div>
               <div className="relative flex flex-[0.7] items-center px-6 py-3">
                 <span className="material-symbols-outlined text-accent mr-3">group</span>
                 <div className="flex w-full flex-col text-left">
                   <label className="text-xs font-bold text-primary uppercase">Guests</label>
-                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" placeholder="Add guests" type="text"/>
+                  <input className="w-full border-none p-0 text-sm font-medium text-gray-700 focus:ring-0 placeholder:text-gray-400" placeholder="Add guests" type="number" min={1}/>
                 </div>
               </div>
             </div>
-            <button onClick={() => navigate('/search')} className="mt-2 w-full rounded-full bg-primary px-10 py-4 text-base font-bold text-white transition-all hover:bg-primary-hover sm:mt-0 sm:w-auto shadow-lg hover:shadow-xl active:scale-95">
+           <button
+  onClick={() => navigate(`/search?location=${encodeURIComponent(location)}`)}className="mt-2 w-full rounded-full bg-primary px-10 py-4 text-base font-bold text-white transition-all hover:bg-primary-hover sm:mt-0 sm:w-auto shadow-lg hover:shadow-xl active:scale-95">
               Search
             </button>
           </div>
@@ -110,7 +116,8 @@ export const HomePage: React.FC = () => {
         <div className="mx-auto max-w-3xl px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Ready to host your own sanctuary?</h2>
           <p className="text-white/70 text-lg md:text-xl mb-10">Join our community of hosts and share your unique architectural space with nature lovers worldwide.</p>
-          <button className="bg-accent text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primary transition-all shadow-xl">
+         <button onClick={() => navigate('/signup-renter')}
+ className="bg-accent text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primary transition-all shadow-xl">
             List Your Property
           </button>
         </div>
