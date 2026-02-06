@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertyCard } from '../components/PropertyCard';
 import { TRUST_INDICATORS } from '../constants';
 import { useProperties } from '../services/properties/hooks';
+import { useLandlordProperties } from '../services/landlord/hooks';
+import { authService } from '../services/auth/functions';
 
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-const { properties } = useProperties( { status: 'PUBLISHED' }, 0,8);
+  const { properties: publicProperties, loading: publicLoading, error: publicError } = useProperties(undefined, 0, 8);
+  const { properties: landlordProperties, loading: landlordLoading, error: landlordError } = useLandlordProperties();
+  const isLandlord = authService.isAuthenticated() && authService.hasRole('LANDLORD');
+
+  const featuredProperties = useMemo(() => {
+    if (isLandlord) {
+      return landlordProperties.slice(0, 8);
+    }
+    return publicProperties;
+  }, [isLandlord, landlordProperties, publicProperties]);
+
+  const isLoading = isLandlord ? landlordLoading : publicLoading;
+  const error = isLandlord ? landlordError : publicError;
 
 
   return (
@@ -99,11 +111,11 @@ const { properties } = useProperties( { status: 'PUBLISHED' }, 0,8);
             <div className="text-center text-text-muted font-semibold">Loading sanctuaries...</div>
           ) : error ? (
             <div className="text-center text-red-600 font-semibold">{error}</div>
-          ) : properties.length === 0 ? (
+          ) : featuredProperties.length === 0 ? (
             <div className="text-center text-text-muted font-semibold">No properties available at the moment.</div>
           ) : (
             <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {properties.map((prop) => (
+              {featuredProperties.map((prop) => (
                 <PropertyCard key={prop.id} property={prop} />
               ))}
             </div>

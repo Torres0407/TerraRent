@@ -6,6 +6,7 @@ import {
   PropertyResponse
 } from '../../api/types/responses';
 import { landlordService } from './functions';
+import { authService } from '../auth/functions';
 
 /**
  * Hook to fetch landlord dashboard metrics
@@ -60,7 +61,18 @@ export const useLandlordProperties = () => {
     }
   };
 
+  
   useEffect(() => {
+    const canFetch =
+      authService.isAuthenticated() && authService.hasRole('LANDLORD');
+
+    if (!canFetch) {
+      setProperties([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     fetchProperties();
   }, []);
 

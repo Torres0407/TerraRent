@@ -47,9 +47,9 @@ export const adminApi = {
    * POST /api/admin/properties/{id}/status
    * Note: Backend expects plain string, not JSON object
    */
-  updatePropertyStatus: (id: number, status: 'PENDING' | 'LIVE' | 'REJECTED' | 'DELETED') => 
-    api.post(`/admin/properties/${id}/status`, status, {
-      headers: { 'Content-Type': 'text/plain' }
+  updatePropertyStatus: (id: string, status: 'PENDING' | 'LIVE' | 'REJECTED' | 'DELETED') => 
+    api.put(`/admin/properties/${id}/status`, { status }, {
+      headers: { 'Content-Type': 'application/json' }
     }),
 
   /**

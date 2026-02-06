@@ -54,10 +54,11 @@ getDashboard: async () => {
    * POST /api/landlord/properties
    */
 createProperty: (data: Partial<PropertyResponse>) => {
-  const token = localStorage.getItem('token');
+   const token = localStorage.getItem('token');
   return api.post<PropertyResponse>('/landlord/properties', data, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  // return api.post<PropertyResponse>('/landlord/properties', data);
 },
 
   /**

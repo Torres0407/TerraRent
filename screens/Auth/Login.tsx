@@ -129,6 +129,7 @@ export const Login: React.FC = () => {
                     {isLoading ? 'hourglass_empty' : 'arrow_forward'}
                   </span>
                 </button>
+
               </form>
               
               <div className="relative flex py-2 items-center">
@@ -277,6 +278,28 @@ export const Login: React.FC = () => {
 //                   <span className="material-symbols-outlined text-[20px]">
 //                     {isLoading ? 'hourglass_empty' : 'arrow_forward'}
 //                   </span>
+//                 </button>
+
+//                 {/* Dev login button */}
+//                 <button
+//                   type="button"
+//                   onClick={() => {
+//                     // Hardcode admin user
+//                     localStorage.setItem('token', 'dev-token');
+//                     localStorage.setItem('user', JSON.stringify({
+//                       id: 1,
+//                       firstName: 'Admin',
+//                       lastName: 'Dev',
+//                       email: 'admin@dev.local',
+//                       phoneNumber: '555-0000',
+//                       role: 'ADMIN',
+//                       status: 'ACTIVE'
+//                     }));
+//                     navigate('/admin/dashboard');
+//                   }}
+//                   className="text-xs text-accent underline mt-2"
+//                 >
+//                   Dev: Login as Admin
 //                 </button>
 //               </form>
               

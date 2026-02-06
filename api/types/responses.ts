@@ -74,10 +74,19 @@ export interface LandlordDashboardResponse {
 }
 
 export interface AdminDashboardResponse {
-  totalUsers: number;
-  totalProperties: number;
-  pendingVerifications: number;
-  openReports: number;
+  stats: {
+    totalUsers: number;
+    totalProperties: number;
+    pendingVerifications: number;
+    openReports: number;
+  };
+  topPerformingProperties: Array<{
+    id: string;
+    title: string;
+    location: string;
+    price: number;
+    image: string;
+  }>;
 }
 
 // Booking Response Types

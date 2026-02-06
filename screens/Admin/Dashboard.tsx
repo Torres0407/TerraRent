@@ -14,7 +14,21 @@ export const AdminDashboard: React.FC = () => {
         setIsLoading(true);
         setError(null);
         const response = await adminApi.getDashboardMetrics();
-        setData(response.data);
+        
+        // Transform backend response to frontend expected format
+        const backendData = response.data;
+        const transformedData = {
+          stats: {
+            totalRevenue: 0,
+            activeRentals: backendData.totalProperties || 0,
+            newUsers: backendData.totalUsers || 0,
+            queueItems: backendData.pendingVerifications + backendData.openReports || 0,
+          },
+          topPerformingProperties: [],
+          recentActivities: [],
+        };
+        
+        setData(transformedData);
       } catch (err) {
         console.error("Failed to fetch admin dashboard data:", err);
         setError("Failed to load dashboard data.");
@@ -57,14 +71,39 @@ export const AdminDashboard: React.FC = () => {
     );
   }
 
-  const { stats, topPerformingProperties } = data;
+  const { stats = {}, topPerformingProperties = [] } = data || {};
 
   const statCards = [
-    { icon: "payments", label: "Total Revenue", value: `$${stats.totalRevenue.toLocaleString()}`, trend: "+12%", trendCol: "text-green-600 bg-green-50" },
-    { icon: "home_work", label: "Active Rentals", value: stats.activeRentals.toLocaleString(), trend: "+5%", trendCol: "text-green-600 bg-green-50" },
-    { icon: "person_add", label: "New Users", value: stats.newUsers.toLocaleString(), trend: "+8%", trendCol: "text-green-600 bg-green-50" },
-    { icon: "pending_actions", label: "Queue Items", value: stats.queueItems.toLocaleString(), trend: "High", trendCol: "text-accent bg-accent/5" }
-  ];
+  { 
+    icon: "payments", 
+    label: "Total Revenue", 
+    value: `$${stats?.totalRevenue?.toLocaleString() ?? 0}`, 
+    trend: "+12%", 
+    trendCol: "text-green-600 bg-green-50" 
+  },
+  { 
+    icon: "home_work", 
+    label: "Active Rentals", 
+    value: stats?.activeRentals?.toLocaleString?.() ?? 0, 
+    trend: "+5%", 
+    trendCol: "text-green-600 bg-green-50" 
+  },
+  { 
+    icon: "person_add", 
+    label: "New Users", 
+    value: stats?.newUsers?.toLocaleString?.() ?? 0, 
+    trend: "+8%", 
+    trendCol: "text-green-600 bg-green-50" 
+  },
+  { 
+    icon: "pending_actions", 
+    label: "Queue Items", 
+    value: stats?.queueItems?.toLocaleString?.() ?? 0, 
+    trend: "High", 
+    trendCol: "text-accent bg-accent/5" 
+  }
+];
+
 
   return (
     <AdminLayout>
@@ -113,7 +152,8 @@ export const AdminDashboard: React.FC = () => {
           <div className="bg-white rounded-[3rem] border border-primary/5 p-10 shadow-2xl flex flex-col space-y-8">
             <h3 className="text-xl font-black text-primary uppercase tracking-widest">Top Performance</h3>
             <div className="flex-1 space-y-6 overflow-y-auto no-scrollbar">
-              {topPerformingProperties.map((p, i) => (
+              {topPerformingProperties?.length > 0 ? (
+                topPerformingProperties.map((p, i) => (
                 <div key={p.id} className="flex items-center gap-4 group cursor-pointer">
                   <div className="size-14 rounded-2xl bg-cover bg-center shrink-0 shadow-lg border border-white group-hover:scale-105 transition-transform" style={{backgroundImage: `url('${p.image}')`}}></div>
                   <div className="flex-1 min-w-0">
@@ -125,7 +165,12 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-green-600 text-[9px] font-black uppercase">Top Stay</p>
                   </div>
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="flex items-center justify-center h-full text-text-muted text-sm font-medium">
+                  No data available
+                </div>
+              )}
             </div>
             <button className="w-full py-4 bg-sand-light/30 rounded-2xl font-black text-[10px] uppercase tracking-widest text-primary hover:bg-sand-light transition-all">View All Rankings</button>
           </div>

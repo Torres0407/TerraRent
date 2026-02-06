@@ -134,7 +134,7 @@ export const useUpdatePropertyStatus = () => {
   const [error, setError] = useState<string | null>(null);
 
   const updateStatus = async (
-    propertyId: number,
+    propertyId: string,
     status: 'PENDING' | 'LIVE' | 'REJECTED' | 'DELETED'
   ) => {
     setLoading(true);

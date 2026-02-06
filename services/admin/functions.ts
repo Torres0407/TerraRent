@@ -49,7 +49,7 @@ export const adminService = {
    * Approve or reject a property listing
    */
   async updatePropertyStatus(
-    propertyId: number,
+    propertyId: string,
     status: 'PENDING' | 'LIVE' | 'REJECTED' | 'DELETED'
   ): Promise<void> {
     await adminApi.updatePropertyStatus(propertyId, status);

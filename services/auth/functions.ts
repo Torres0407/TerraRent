@@ -12,7 +12,13 @@ export const authService = {
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     const response = await authApi.login(credentials);
-    const { accessToken, user } = response.data;
+    const { accessToken } = response.data;
+    const rawUser = response.data.user;
+    const normalizedRole = rawUser.role?.toString().replace('ROLE_', '') as
+      | 'RENTER'
+      | 'LANDLORD'
+      | 'ADMIN';
+    const user = { ...rawUser, role: normalizedRole };
     
     // Store token and user in localStorage
     localStorage.setItem('token', accessToken);

@@ -14,14 +14,21 @@ export const api = axios.create({
   timeout: 10000, // 10 seconds
 });
 
-// Request interceptor - Add JWT token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
+
+    // ✅ only attach valid JWTs
+    if (token && token.split('.').length === 3) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
     }
-    console.log(`🚀 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+
+    console.log(
+      `🚀 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
+    );
+
     return config;
   },
   (error: AxiosError) => {
@@ -29,6 +36,7 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 
 // Response interceptor - Handle errors globally
 api.interceptors.response.use(

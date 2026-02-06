@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { landlordApi } from '../../api/endpoints/landlord';
 import { LandlordDashboardData } from '../../types';
 import { LandlordLayout } from './LandlordLayout';
+import { authService } from '../../services/auth/functions';
 
 export const LandlordDashboard: React.FC = () => {
   const [data, setData] = useState<LandlordDashboardData | null>(null);
@@ -13,6 +14,14 @@ export const LandlordDashboard: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
+
+        const isLandlord =
+          authService.isAuthenticated() && authService.hasRole('LANDLORD');
+        if (!isLandlord) {
+          setError('Please sign in as a landlord to view the dashboard.');
+          return;
+        }
+
        const dashboardData = await landlordApi.getDashboard();
 console.log("LANDLORD DASHBOARD API RAW:", dashboardData);
 

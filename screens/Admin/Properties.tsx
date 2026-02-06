@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../api/endpoints/admin';
 import { Property } from '../../types';
 import { AdminLayout } from './AdminLayout';
+import { useUpdatePropertyStatus } from '../../services/admin/hooks';
 
 export const AdminProperties: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'PENDING' | 'LIVE' | 'REJECTED' | 'DELETED' | undefined>(undefined);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { updateStatus } = useUpdatePropertyStatus();
 
   const fetchProperties = async () => {
     try {
@@ -27,8 +31,91 @@ export const AdminProperties: React.FC = () => {
     fetchProperties();
   }, [statusFilter]);
 
+  const handleUpdatePropertyStatus = async (action: 'LIVE' | 'REJECTED') => {
+    if (!selectedProperty) return;
+    setIsProcessing(true);
+    try {
+      await updateStatus(selectedProperty.id, action);
+      setSelectedProperty(null);
+      fetchProperties();
+    } catch (error) {
+      console.error("Failed to update property status:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const PropertyModal = () => {
+    if (!selectedProperty) return null;
+    
+    return (
+      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={() => setSelectedProperty(null)}>
+        <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+          <div className="p-10 space-y-8">
+            <div className="flex items-center gap-6">
+              <div className="size-32 rounded-[1.5rem] overflow-hidden shadow-xl border-4 border-white">
+                <img src={selectedProperty.image} className="w-full h-full object-cover" alt={selectedProperty.title}/>
+              </div>
+              <div>
+                <h2 className="text-3xl font-black text-primary tracking-tighter">{selectedProperty.title}</h2>
+                <p className="text-sm font-bold text-text-muted">{selectedProperty.location}</p>
+                <p className="text-[10px] font-black text-accent uppercase tracking-widest mt-2">{selectedProperty.type}</p>
+              </div>
+            </div>
+            <div className="bg-sand-light/20 p-6 rounded-2xl border border-primary/5 space-y-4">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Property Details</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-primary">Price:</span>
+                  <span className="font-medium text-primary/80">${selectedProperty.price}/month</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-primary">Bedrooms:</span>
+                  <span className="font-medium text-primary/80">{selectedProperty.bedrooms}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-primary">Bathrooms:</span>
+                  <span className="font-medium text-primary/80">{selectedProperty.bathrooms}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-primary">Status:</span>
+                  <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                    selectedProperty.status === 'LIVE' ? 'bg-green-50 text-green-700 border border-green-100' :
+                    selectedProperty.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border border-amber-100' :
+                    'bg-red-50 text-red-700 border border-red-100'
+                  }`}>{selectedProperty.status}</span>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-primary/5">
+                <p className="text-sm font-bold text-primary mb-2">Description:</p>
+                <p className="text-sm text-primary/70 leading-relaxed">{selectedProperty.description}</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-8 bg-sand-light/30 flex gap-4">
+            <button 
+              onClick={() => handleUpdatePropertyStatus('REJECTED')}
+              disabled={isProcessing}
+              className="flex-1 h-14 bg-red-50 text-red-700 font-black rounded-2xl hover:bg-red-100 transition-all disabled:opacity-50"
+            >
+              {isProcessing ? '...' : 'Reject'}
+            </button>
+            <button 
+              onClick={() => handleUpdatePropertyStatus('LIVE')}
+              disabled={isProcessing}
+              className="flex-1 h-14 bg-green-600 text-white font-black rounded-2xl hover:bg-green-700 transition-all shadow-lg disabled:opacity-50"
+            >
+              {isProcessing ? '...' : 'Approve'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <AdminLayout>
+      <PropertyModal />
       <div className="p-8 md:p-12 max-w-7xl mx-auto space-y-12">
         <header className="flex flex-wrap items-center justify-between gap-8">
             <div className="space-y-2">
@@ -125,7 +212,7 @@ export const AdminProperties: React.FC = () => {
                                    </span>
                                 </td>
                                 <td className="py-8 px-10 border-b border-primary/5 text-right">
-                                   <button className="px-6 py-2.5 rounded-xl border-2 border-primary/10 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all">Moderate</button>
+                                   <button onClick={() => setSelectedProperty(p)} className="px-6 py-2.5 rounded-xl border-2 border-primary/10 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary hover:text-white transition-all">Moderate</button>
                                 </td>
                             </tr>
                         ))}

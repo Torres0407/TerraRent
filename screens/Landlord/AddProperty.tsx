@@ -1,10 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { landlordApi } from '../../api/endpoints/landlord';
 import { LandlordLayout } from './LandlordLayout';
+import { useAuth } from '../../context/AuthContext';
 
 export const LandlordAddProperty: React.FC = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
+  // // Check if user is authenticated and has landlord role
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     navigate('/login');
+  //     return;
+  //   }
+  //   if (user?.role !== 'LANDLORD') {
+  //     navigate('/dashboard'); // or appropriate page
+  //     return;
+  //   }
+  // }, [isAuthenticated, user, navigate]);
+
+  // // If not authenticated or not landlord, don't render
+  // if (!isAuthenticated || user?.role !== 'LANDLORD') {
+  //   return null;
+  // }
+
+ useEffect(() => {
+  if (authLoading) return;
+
+  if (!isAuthenticated) {
+    navigate('/login');
+    return;
+  }
+
+  if (user?.role !== 'LANDLORD') {
+    navigate('landlord/dashboard');
+  }
+}, [authLoading, isAuthenticated, user, navigate]);
+
   
   // Basic Information
   const [title, setTitle] = useState('');
@@ -181,6 +214,17 @@ export const LandlordAddProperty: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (authLoading) {
+  return (
+    <LandlordLayout>
+      <div className="p-8 text-center font-semibold text-primary">
+        Checking authentication…
+      </div>
+    </LandlordLayout>
+  );
+}
+
 
   return (
     <LandlordLayout>

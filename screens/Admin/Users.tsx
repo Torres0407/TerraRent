@@ -18,10 +18,13 @@ export const AdminUsers: React.FC = () => {
     setError(null);
     try {
       const response = await adminApi.getUsers(page, 10);
-      setUsers(response.data.content);
+      // Handle both paginated and flat array responses
+      const usersData = Array.isArray(response.data) ? response.data : response.data?.content || [];
+      setUsers(usersData);
     } catch (err) {
       console.error("Failed to fetch users:", err);
       setError("Failed to load users.");
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -57,6 +60,7 @@ export const AdminUsers: React.FC = () => {
   };
 
   const filteredUsers = useMemo(() => {
+    if (!users || !Array.isArray(users)) return [];
     if (filter === 'All') return users;
     if (filter === 'Hosts') return users.filter(u => u.role === 'LANDLORD' || u.role === 'AGENT');
     if (filter === 'Renters') return users.filter(u => u.role === 'RENTER');
@@ -93,10 +97,10 @@ export const AdminUsers: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            {label: "Global Members", val: users.length, icon: "group", change: "+5.2%", col: "bg-sand-light/30" },
-            {label: "Verified Hosts", val: users.filter(u => u.role === 'LANDLORD' || u.role === 'AGENT').length, icon: "real_estate_agent", change: "+1.8%", col: "bg-sand-light/30" },
-            {label: "In Queue", val: users.filter(u => u.status === 'PENDING_VERIFICATION').length, icon: "verified_user", change: "Alert", col: "bg-accent/10" },
-            {label: "Suspended", val: users.filter(u => u.status === 'SUSPENDED').length, icon: "block", change: `+${users.filter(u => u.status === 'SUSPENDED').length}`, col: "bg-red-50" }
+            {label: "Global Members", val: users?.length || 0, icon: "group", change: "+5.2%", col: "bg-sand-light/30" },
+            {label: "Verified Hosts", val: users?.filter(u => u.role === 'LANDLORD' || u.role === 'AGENT')?.length || 0, icon: "real_estate_agent", change: "+1.8%", col: "bg-sand-light/30" },
+            {label: "In Queue", val: users?.filter(u => u.status === 'PENDING_VERIFICATION')?.length || 0, icon: "verified_user", change: "Alert", col: "bg-accent/10" },
+            {label: "Suspended", val: users?.filter(u => u.status === 'SUSPENDED')?.length || 0, icon: "block", change: `+${users?.filter(u => u.status === 'SUSPENDED')?.length || 0}`, col: "bg-red-50" }
           ].map((s,i) => (
             <div key={i} className={`p-8 rounded-[2.5rem] border border-primary/5 shadow-xl ${s.col} space-y-4`}>
                 <div className="flex items-center justify-between">

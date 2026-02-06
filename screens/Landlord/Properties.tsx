@@ -12,28 +12,6 @@ useEffect(() => {
 }, [properties]);
 
 
-  
-  // const [properties, setProperties] = useState<Property[]>([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
-
-
-  // useEffect(() => {
-  //   const fetchProperties = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       setError(null);
-  //       const data = await landlordApi.getProperties();
-  //       setProperties(data);
-  //     } catch (err) {
-  //       console.error("Failed to fetch landlord properties:", err);
-  //       setError("Failed to load properties.");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchProperties();
-  // }, []);
 
   return (
     <LandlordLayout>
