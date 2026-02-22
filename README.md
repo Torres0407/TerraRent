@@ -478,9 +478,3 @@ SPRING_JPA_HIBERNATE_DDL_AUTO=update
 - **Validation**: Jakarta Validation
 
 ---
-
-## Next Steps / Suggestions
-Create `.env.example` files for frontend/backend configuration
-Add SQL script for admin user seeding
-Implement database migration strategy (Flyway/Liquibase)
-Add integration & unit tests documentation
