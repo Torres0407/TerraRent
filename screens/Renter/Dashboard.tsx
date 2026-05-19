@@ -149,6 +149,10 @@ export const Dashboard: React.FC = () => {
               <span className="material-symbols-outlined">history</span>
               <span className="font-medium">History</span>
             </Link>
+            <Link to="/hotel-search" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-primary-dark/50 hover:text-white transition-all duration-200">
+              <span className="material-symbols-outlined">travel_explore</span>
+              <span className="font-medium">Live Hotels</span>
+            </Link>
             <div className="mt-8 pt-8 border-t border-white/10">
               <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/50 hover:text-white transition-all duration-200">
                 <span className="material-symbols-outlined">logout</span>

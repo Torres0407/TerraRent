@@ -13,4 +13,5 @@ export * from './properties';
 export * from './renter';
 export * from './reviews';
 export * from './users';
+export * from './bookingCom';
 

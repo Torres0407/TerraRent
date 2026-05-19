@@ -30,6 +30,7 @@ import { Negotiation } from './screens/Renter/Negotiation';
 import { RecentlyViewed } from './screens/Renter/RecentlyViewed';
 import { SavedProperties } from './screens/Renter/SavedProperties';
 import { ScheduleTour } from './screens/Renter/ScheduleTour';
+import HotelSearch from './screens/Renter/HotelSearch';
 
 // Landlord Screens
 import { LandlordAddProperty } from './screens/Landlord/AddProperty';
@@ -88,6 +89,7 @@ const App: React.FC = () => {
           <Route path="/schedule" element={<ScheduleTour />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/negotiation" element={<Negotiation />} />
+          <Route path="/hotel-search" element={<HotelSearch />} />
 
           {/* Landlord Portal Routes */}
           <Route path="/landlord/dashboard" element={<LandlordDashboard />} />

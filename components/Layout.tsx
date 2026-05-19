@@ -34,6 +34,7 @@ const Navigation = () => {
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/search" className={`text-sm transition-colors ${isActive('/search')}`}>Search</Link>
           <Link to="/map" className={`text-sm transition-colors ${isActive('/map')}`}>Map</Link>
+          <Link to="/hotel-search" className={`text-sm transition-colors ${isActive('/hotel-search')}`}>Live Hotels</Link>
           <Link to="/how-it-works" className={`text-sm transition-colors ${isActive('/how-it-works')}`}>How it Works</Link>
           <Link to="/pricing" className={`text-sm transition-colors ${isActive('/pricing')}`}>Pricing</Link>
           <Link to="/about" className={`text-sm transition-colors ${isActive('/about')}`}>About</Link>
@@ -78,6 +79,9 @@ const Navigation = () => {
       <Link to="/dashboard" className="block px-4 py-3 hover:bg-gray-50">
         My Account
       </Link>
+      <Link to="/hotel-search" className="block px-4 py-3 hover:bg-gray-50">
+        Live Hotels
+      </Link>
 
       <button
         onClick={logout}
@@ -98,7 +102,7 @@ const Navigation = () => {
 
       {isMenuOpen && (
         <div className="md:hidden absolute top-20 left-0 w-full bg-background-light border-b border-primary/10 shadow-xl py-4 px-4 flex flex-col gap-4">
-          {['/search', '/map', '/how-it-works', '/pricing', '/about', '/faq', '/contact'].map((path) => (
+          {['/search', '/map', '/hotel-search', '/how-it-works', '/pricing', '/about', '/faq', '/contact'].map((path) => (
             <Link key={path} to={path} className="text-base font-semibold text-primary capitalize" onClick={() => setIsMenuOpen(false)}>
               {path.replace('/', '').replace(/-/g, ' ')}
             </Link>
