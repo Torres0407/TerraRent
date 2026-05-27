@@ -31,6 +31,7 @@ import { RecentlyViewed } from './screens/Renter/RecentlyViewed';
 import { SavedProperties } from './screens/Renter/SavedProperties';
 import { ScheduleTour } from './screens/Renter/ScheduleTour';
 import HotelSearch from './screens/Renter/HotelSearch';
+import HotelDetails from './screens/Renter/HotelDetails';
 
 // Landlord Screens
 import { LandlordAddProperty } from './screens/Landlord/AddProperty';
@@ -65,9 +66,7 @@ const App: React.FC = () => {
           <Route path="/amenities" element={<AmenitiesPage />} />
           <Route path="/image-services" element={<ImageServicesPage />} />
           <Route path="/about" element={<StaticPages.About />} />
-          <Route path="/how-it-works" element={<StaticPages.HowItWorks />} />
           <Route path="/pricing" element={<StaticPages.Pricing />} />
-          <Route path="/faq" element={<StaticPages.FAQ />} />
           <Route path="/contact" element={<StaticPages.Contact />} />
 
           {/* Authentication Routes */}
@@ -90,6 +89,7 @@ const App: React.FC = () => {
           <Route path="/chat" element={<Chat />} />
           <Route path="/negotiation" element={<Negotiation />} />
           <Route path="/hotel-search" element={<HotelSearch />} />
+          <Route path="/hotel-details/:id" element={<HotelDetails />} />
 
           {/* Landlord Portal Routes */}
           <Route path="/landlord/dashboard" element={<LandlordDashboard />} />

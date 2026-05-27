@@ -193,11 +193,12 @@ export const LandlordAddProperty: React.FC = () => {
 
       console.log('Sending property data:', propertyData);
 
-      const newProperty = await landlordApi.createProperty(propertyData);
+      const response = await landlordApi.createProperty(propertyData);
+      const newProperty = response.data;
       if (!newProperty || !newProperty.id) {
-  setError('Failed to create property: No ID received from server');
-  return;
-}
+        setError('Failed to create property: No ID received from server');
+        return;
+      }
       navigate(`/landlord/media/${newProperty.id}`);
     } catch (err: any) {
       console.error('Error creating property:', err);

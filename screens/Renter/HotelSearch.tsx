@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { bookingComService } from '../../services/bookingcom/functions';
+import { useAuth } from '../../context/AuthContext';
 
 // Interface for Booking.com accommodation result
 interface Accommodation {
@@ -15,50 +17,44 @@ interface Accommodation {
   tag?: string;
   roomType?: string;
   cancellationFree?: boolean;
+  description?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 // Predefined world destinations with coordinates or ID and stunning background photos
 const FEATURED_DESTINATIONS = [
-  { name: 'London', cityId: '-2140479', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?auto=format&fit=crop&q=80&w=600', country: 'United Kingdom' },
-  { name: 'Paris', cityId: '-1456928', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=600', country: 'France' },
-  { name: 'Tokyo', cityId: '-246227', image: 'https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=600', country: 'Japan' },
-  { name: 'New York', cityId: '20088329', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=600', country: 'United States' },
-  { name: 'Rome', cityId: '-126693', image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=600', country: 'Italy' },
-  { name: 'Lagos', cityId: '-2012019', image: 'https://images.unsplash.com/photo-1601999109332-542b18dbec57?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' }
+  { name: 'Lagos', cityId: '-2012019', image: 'https://images.unsplash.com/photo-1601999109332-542b18dbec57?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' },
+  { name: 'Abuja', cityId: '-1997230', image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' },
+  { name: 'Port Harcourt', cityId: '-2022718', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' },
+  { name: 'Enugu', cityId: '-2006325', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' },
+  { name: 'Kano', cityId: '-2010996', image: 'https://images.unsplash.com/photo-1449156001533-cb39c7324c60?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' },
+  { name: 'Ibadan', cityId: '-2008639', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=600', country: 'Nigeria' }
 ];
 
 // Curated high-fidelity mock hotels list per city to fall back gracefully if API has no credentials
 const MOCK_HOTELS_FALLBACK: Record<string, Accommodation[]> = {
-  '-2140479': [
-    { id: 'lon-1', name: 'The Ritz London', address: '150 Piccadilly, St. James\'s', city: 'London', price: 420, rating: 9.6, ratingText: 'Exceptional', reviewsCount: 1245, image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', tag: 'Eco-Certified', roomType: 'Executive King Suite', cancellationFree: true },
-    { id: 'lon-2', name: 'CitizenM Tower of London', address: '40 Trinity Square', city: 'London', price: 185, rating: 8.9, ratingText: 'Fabulous', reviewsCount: 4512, image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800', tag: 'Best Seller', roomType: 'Smart Double Room', cancellationFree: true },
-    { id: 'lon-3', name: 'The Savoy Hotel', address: 'Strand, Covent Garden', city: 'London', price: 380, rating: 9.4, ratingText: 'Superb', reviewsCount: 890, image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800', tag: 'Historical Luxury', roomType: 'Deluxe Queen Room', cancellationFree: false },
-    { id: 'lon-4', name: 'Leman Locke Aldgate', address: '15 Leman St', city: 'London', price: 145, rating: 8.7, ratingText: 'Very Good', reviewsCount: 1650, image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800', tag: 'Great Value', roomType: 'Studio Apartment', cancellationFree: true }
-  ],
-  '-1456928': [
-    { id: 'par-1', name: 'Hôtel Plaza Athénée', address: '25 Avenue Montaigne', city: 'Paris', price: 540, rating: 9.7, ratingText: 'Exceptional', reviewsCount: 934, image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80&w=800', tag: 'Luxury Preferred', roomType: 'Superior Room Eiffel View', cancellationFree: false },
-    { id: 'par-2', name: 'Le Pavillon de la Reine', address: '28 Place des Vosges', city: 'Paris', price: 290, rating: 9.2, ratingText: 'Superb', reviewsCount: 612, image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800', tag: 'Romantic Stay', roomType: 'Classic Queen Room', cancellationFree: true },
-    { id: 'par-3', name: 'Generator Paris Hostellerie', address: '9-11 Place du Colonel Fabien', city: 'Paris', price: 85, rating: 8.1, ratingText: 'Very Good', reviewsCount: 8920, image: 'https://images.unsplash.com/photo-1554009975-d74653b879f1?auto=format&fit=crop&q=80&w=800', tag: 'Budget Friendly', roomType: 'Twin Room Private Bathroom', cancellationFree: true }
-  ],
-  '-246227': [
-    { id: 'tok-1', name: 'Aman Tokyo', address: '1-5-6 Otemachi, Chiyoda-ku', city: 'Tokyo', price: 680, rating: 9.8, ratingText: 'Exceptional', reviewsCount: 450, image: 'https://images.unsplash.com/photo-1503174971373-b1f69850bded?auto=format&fit=crop&q=80&w=800', tag: 'Ultra Premium', roomType: 'Deluxe King Palace View', cancellationFree: true },
-    { id: 'tok-2', name: 'Park Hyatt Tokyo', address: '3-7-1-2 Nishi-Shinjuku', city: 'Tokyo', price: 410, rating: 9.3, ratingText: 'Superb', reviewsCount: 1420, image: 'https://images.unsplash.com/photo-1606046604972-77cc76aee944?auto=format&fit=crop&q=80&w=800', tag: 'Iconic View', roomType: 'Park Deluxe Room', cancellationFree: false },
-    { id: 'tok-3', name: 'Hotel Gracery Shinjuku', address: '1-19-1 Kabukicho', city: 'Tokyo', price: 165, rating: 8.6, ratingText: 'Very Good', reviewsCount: 5210, image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800', tag: 'Godzilla View', roomType: 'Standard Single Room', cancellationFree: true }
-  ],
-  '20088329': [
-    { id: 'ny-1', name: 'The Plaza New York', address: '768 5th Ave, Central Park South', city: 'New York', price: 580, rating: 9.5, ratingText: 'Exceptional', reviewsCount: 2014, image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800', tag: 'Historic Elegance', roomType: 'Grand Luxury Queen', cancellationFree: false },
-    { id: 'ny-2', name: 'Arlo NoMad Hotel', address: '11 E 31st St', city: 'New York', price: 210, rating: 8.8, ratingText: 'Fabulous', reviewsCount: 3120, image: 'https://images.unsplash.com/photo-1568495248636-6432b97bd949?auto=format&fit=crop&q=80&w=800', tag: 'Trendy Vibe', roomType: 'Micro Queen Room', cancellationFree: true },
-    { id: 'ny-3', name: 'The Standard High Line', address: '848 Washington St', city: 'New York', price: 340, rating: 9.0, ratingText: 'Superb', reviewsCount: 1980, image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=800', tag: 'Stunning Skyline', roomType: 'Standard King River View', cancellationFree: true }
-  ],
-  '-126693': [
-    { id: 'rom-1', name: 'Elizabeth Unique Hotel', address: 'Via delle Colonnette 35', city: 'Rome', price: 310, rating: 9.4, ratingText: 'Superb', reviewsCount: 780, image: 'https://images.unsplash.com/photo-1529290130-4ca3753253ae?auto=format&fit=crop&q=80&w=800', tag: 'Art Boutique', roomType: 'Deluxe Double', cancellationFree: true },
-    { id: 'rom-2', name: 'Rome Marriott Grand Hotel Flora', address: 'Via Vittorio Veneto 191', city: 'Rome', price: 240, rating: 8.7, ratingText: 'Very Good', reviewsCount: 1540, image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80&w=800', tag: 'Classic Elegance', roomType: 'Premium King Room', cancellationFree: true }
-  ],
   '-2012019': [
-    { id: 'lag-1', name: 'The Wheatbaker', address: '4 Lawrence Rd, Ikoyi', city: 'Lagos', price: 280, rating: 9.3, ratingText: 'Superb', reviewsCount: 654, image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800', tag: 'Luxury Boutique', roomType: 'Executive Queen Room', cancellationFree: true },
-    { id: 'lag-2', name: 'Eko Hotels & Suites', address: 'Plot 1415 Adetokunbo Ademola St, Victoria Island', city: 'Lagos', price: 225, rating: 8.9, ratingText: 'Fabulous', reviewsCount: 2814, image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800', tag: 'Top Rating', roomType: 'Deluxe Ocean View Room', cancellationFree: true },
-    { id: 'lag-3', name: 'Radisson Blu Anchorage Hotel', address: '1A Ozumba Mbadiwe Ave, Victoria Island', city: 'Lagos', price: 195, rating: 8.7, ratingText: 'Very Good', reviewsCount: 1042, image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', tag: 'Business Class', roomType: 'Superior Lagoon View Room', cancellationFree: false },
-    { id: 'lag-4', name: 'Legend Hotel Lagos Airport, Curio Collection by Hilton', address: 'Ikeja Club Road, Ikeja', city: 'Lagos', price: 340, rating: 9.5, ratingText: 'Exceptional', reviewsCount: 420, image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800', tag: 'Premium Executive', roomType: 'Deluxe Suite with Runway View', cancellationFree: true }
+    { id: 'lag-1', name: 'The Wheatbaker', address: '4 Lawrence Rd, Ikoyi', city: 'Lagos', price: 280, rating: 9.3, ratingText: 'Superb', reviewsCount: 654, image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800', tag: 'Luxury Boutique', roomType: 'Executive Queen Room', cancellationFree: true, latitude: 6.4529, longitude: 3.4411, description: 'A boutique luxury hotel in Ikoyi featuring signature dining and world-class spa facilities.' },
+    { id: 'lag-2', name: 'Eko Hotels & Suites', address: 'Plot 1415 Adetokunbo Ademola St, Victoria Island', city: 'Lagos', price: 225, rating: 8.9, ratingText: 'Fabulous', reviewsCount: 2814, image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800', tag: 'Top Rating', roomType: 'Deluxe Ocean View Room', cancellationFree: true, latitude: 6.4227, longitude: 3.4285, description: 'The most prestigious hotel conference center in West Africa, nestled in serene Victoria Island gardens.' },
+    { id: 'lag-3', name: 'Radisson Blu Anchorage Hotel', address: '1A Ozumba Mbadiwe Ave, Victoria Island', city: 'Lagos', price: 195, rating: 8.7, ratingText: 'Very Good', reviewsCount: 1042, image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', tag: 'Lagoon View', roomType: 'Superior Lagoon View Room', cancellationFree: false, latitude: 6.4355, longitude: 3.4202, description: 'Overlooking the scenic Five Cowries Creek, this waterfront sanctuary provides stellar business and leisure amenities.' },
+    { id: 'lag-4', name: 'Legend Hotel Lagos Airport', address: 'Ikeja Club Road, Ikeja', city: 'Lagos', price: 340, rating: 9.5, ratingText: 'Exceptional', reviewsCount: 420, image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800', tag: 'Runway Luxury', roomType: 'Deluxe Suite with Runway View', cancellationFree: true, latitude: 6.5782, longitude: 3.3214, description: 'An upscale Curio Collection by Hilton airport hotel complete with private jet hangar access and gourmet dining.' }
+  ],
+  '-1997230': [
+    { id: 'abj-1', name: 'Transcorp Hilton Abuja', address: '1 Aguiyi Ironsi St, Maitama', city: 'Abuja', price: 290, rating: 9.4, ratingText: 'Superb', reviewsCount: 1845, image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&q=80&w=800', tag: 'Iconic Hotel', roomType: 'King Executive Maitama View', cancellationFree: true, latitude: 9.0772, longitude: 7.4984, description: 'Set in lush landscaped gardens in the heart of Maitama, this presidential hotel offers tennis courts and dining.' },
+    { id: 'abj-2', name: 'Fraser Suites Abuja', address: '21 Lafia St, Central Business District', city: 'Abuja', price: 340, rating: 9.6, ratingText: 'Exceptional', reviewsCount: 780, image: 'https://images.unsplash.com/photo-1568495248636-6432b97bd949?auto=format&fit=crop&q=80&w=800', tag: 'Premium Service', roomType: 'Studio Executive Apartment', cancellationFree: true, latitude: 9.0563, longitude: 7.4985, description: 'Providing high-end gold standard residences catering beautifully to global executives and diplomats.' }
+  ],
+  '-2022718': [
+    { id: 'ph-1', name: 'Golden Tulip Port Harcourt', address: '37-39 Evo Rd, GRA Phase II', city: 'Port Harcourt', price: 180, rating: 8.8, ratingText: 'Fabulous', reviewsCount: 310, image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800', tag: 'Top Value', roomType: 'Deluxe King Room', cancellationFree: true, latitude: 4.8156, longitude: 7.0498, description: 'A highly secure, serene boutique setting with pristine gardens, swimming pools, and traditional hospitality.' }
+  ],
+  '-2006325': [
+    { id: 'enu-1', name: 'Nike Lake Resort Enugu', address: 'Nike Lake Road', city: 'Enugu', price: 130, rating: 8.5, ratingText: 'Very Good', reviewsCount: 420, image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&q=80&w=800', tag: 'Scenic Resort', roomType: 'Lakeview Deluxe Room', cancellationFree: true, latitude: 6.5050, longitude: 7.5350, description: 'Bordering the gorgeous Nike Lake, this resort provides peace and relaxation with local boat tours.' }
+  ],
+  '-2010996': [
+    { id: 'kan-1', name: 'Bristol Palace Hotel Kano', address: '54/56 Guda Abdullahi Rd, Farm Centre', city: 'Kano', price: 170, rating: 9.2, ratingText: 'Superb', reviewsCount: 540, image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800', tag: 'Palatial Stay', roomType: 'Superior Palatial Suite', cancellationFree: true, latitude: 12.0022, longitude: 8.5919, description: 'Providing high-end palatial design and absolute luxury in Kano with standard business support services.' }
+  ],
+  '-2008639': [
+    { id: 'ibd-1', name: 'The Carlton Gate Hotel', address: 'Quarters 860, Agodi GRA', city: 'Ibadan', price: 160, rating: 8.8, ratingText: 'Fabulous', reviewsCount: 390, image: 'https://images.unsplash.com/photo-1606046604972-77cc76aee944?auto=format&fit=crop&q=80&w=800', tag: 'GRA Secure', roomType: 'Executive Room', cancellationFree: true, latitude: 7.4089, longitude: 3.9204, description: 'A highly elegant GRA retreat combining tranquility with contemporary comforts in capital style.' }
   ]
 };
 
@@ -70,6 +66,8 @@ const GENERIC_HOTELS: Accommodation[] = [
 ];
 
 export default function HotelSearch() {
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
   const [hotels, setHotels] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -82,7 +80,7 @@ export default function HotelSearch() {
   const [bookingLoading, setBookingLoading] = useState(false);
   
   const [searchParams, setSearchParams] = useState({
-    cityId: '-2140479', // London
+    cityId: '-2012019', // Lagos, Nigeria
     checkin: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week in future
     checkout: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 9 days in future
     numberOfRooms: 1,
@@ -110,11 +108,34 @@ export default function HotelSearch() {
       }
 
       // Check if data formatting requires transformation
-      if (liveData && liveData.accommodations) {
-        setHotels(liveData.accommodations || []);
+      let dataToMap: any[] = [];
+      if (Array.isArray(liveData)) {
+        dataToMap = liveData;
+      } else if (liveData && liveData.accommodations) {
+        dataToMap = liveData.accommodations;
       } else {
         throw new Error('Empty payload from sandboxed endpoint');
       }
+
+      const mappedHotels = dataToMap.map((h: any) => ({
+        id: h.hotel_id || h.id,
+        name: h.name,
+        address: h.address,
+        city: h.city,
+        price: h.nightly_price || h.price || 0,
+        rating: h.rating || 0,
+        ratingText: h.rating >= 9 ? 'Exceptional' : h.rating >= 8.5 ? 'Superb' : h.rating >= 8 ? 'Very Good' : h.ratingText || 'Good',
+        reviewsCount: h.review_count || h.reviewsCount || 0,
+        image: h.primary_image || h.image,
+        tag: h.tag,
+        roomType: h.roomType,
+        cancellationFree: h.cancellationFree,
+        description: h.description,
+        latitude: h.latitude,
+        longitude: h.longitude,
+      }));
+
+      setHotels(mappedHotels);
     } catch (err) {
       console.warn("⚠️ API keys or backend connection sandboxed. Loading high-fidelity simulator data...");
       setIsSandboxSimulation(true);
@@ -147,17 +168,40 @@ export default function HotelSearch() {
   };
 
   const handleBookNow = (hotel: Accommodation) => {
-    setBookingHotel(hotel);
-    setBookingSuccess(false);
-    setBookingLoading(false);
+    navigate(`/hotel-details/${hotel.id}?checkin=${searchParams.checkin}&checkout=${searchParams.checkout}&rooms=${searchParams.numberOfRooms}&guests=${searchParams.numberOfAdults}`);
   };
 
-  const confirmBooking = () => {
+  const confirmBooking = async () => {
+    if (!isAuthenticated) {
+      alert('Please log in to reserve an affiliate room.');
+      return;
+    }
+
+    if (!bookingHotel) return;
+
     setBookingLoading(true);
-    setTimeout(() => {
+    try {
+      const payload = {
+        hotelId: bookingHotel.id.toString(),
+        title: bookingHotel.name,
+        description: bookingHotel.description || `Premium stay at ${bookingHotel.name}`,
+        address: bookingHotel.address,
+        nightlyPrice: bookingHotel.price,
+        imageUrl: bookingHotel.image,
+        bookingDate: searchParams.checkin,
+        latitude: bookingHotel.latitude || 0,
+        longitude: bookingHotel.longitude || 0,
+        status: "CONFIRMED" as const
+      };
+
+      await bookingComService.bookAccommodation(payload);
       setBookingLoading(false);
       setBookingSuccess(true);
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      setBookingLoading(false);
+      alert('Failed to book hotel via affiliate network. Please try again.');
+    }
   };
 
   const getCityName = (cityId: string) => {
@@ -181,7 +225,7 @@ export default function HotelSearch() {
         <div className="flex items-center gap-2 text-sm text-text-muted mb-4">
           <span>Renter Portal</span>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="font-bold text-accent">Booking.com Affiliate API</span>
+          <span className="font-bold text-accent">Nigeria Live Hotels</span>
         </div>
 
         {/* Premium Header */}
@@ -191,7 +235,7 @@ export default function HotelSearch() {
               Live Hotels Portal
             </h1>
             <p className="text-text-muted text-lg mt-2 font-medium">
-              Explore global accommodations live in real-time, powered by Booking.com Affiliate API.
+              Explore premium accommodations across Nigeria in real-time, powered by live booking services.
             </p>
           </div>
           <div className="flex gap-2 bg-white/60 backdrop-blur-md p-1 rounded-2xl border border-primary/5 shadow-sm self-start">
@@ -216,7 +260,7 @@ export default function HotelSearch() {
           
           <h2 className="text-lg font-black uppercase tracking-widest text-primary flex items-center gap-2">
             <span className="material-symbols-outlined text-accent">travel_explore</span>
-            Find Global Stays
+            Find Stays in Nigeria
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -231,12 +275,13 @@ export default function HotelSearch() {
                   onChange={e => setSearchParams({...searchParams, cityId: e.target.value})}
                   className="w-full bg-sand-light/30 border border-primary/10 rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-gray-800 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
                 >
-                  <option value="-2140479">London (UK)</option>
-                  <option value="-1456928">Paris (France)</option>
-                  <option value="-246227">Tokyo (Japan)</option>
-                  <option value="20088329">New York (USA)</option>
-                  <option value="-126693">Rome (Italy)</option>
                   <option value="-2012019">Lagos (Nigeria)</option>
+                  <option value="-1997230">Abuja (Nigeria)</option>
+                  <option value="-2022718">Port Harcourt (Nigeria)</option>
+                  <option value="-2006325">Enugu (Nigeria)</option>
+                  <option value="-2010996">Kano (Nigeria)</option>
+                  <option value="-2008639">Ibadan (Nigeria)</option>
+
                 </select>
               </div>
             </div>
@@ -538,7 +583,7 @@ export default function HotelSearch() {
                             onClick={() => handleBookNow(hotel)}
                             className="bg-primary hover:bg-primary-hover text-white text-xs font-black uppercase tracking-widest px-6 py-3.5 rounded-2xl shadow-lg active:scale-95 transition-all flex items-center gap-2"
                           >
-                            <span>Book Affiliate Room</span>
+                            <span>Book Room</span>
                             <span className="material-symbols-outlined text-sm">arrow_forward</span>
                           </button>
                         </div>

@@ -33,7 +33,7 @@
 // export const useAuth = () => useContext(AuthContext);
 
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authService } from '../services/auth/functions';
 
 type AuthContextType = {

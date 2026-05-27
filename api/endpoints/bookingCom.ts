@@ -10,6 +10,19 @@ export interface BookingSearchRequest {
   numberOfAdults?: number;
 }
 
+export interface CreateExternalBookingRequest {
+  hotelId: string;
+  title: string;
+  description: string;
+  address: string;
+  nightlyPrice: number;
+  imageUrl?: string;
+  bookingDate: string; // Format: YYYY-MM-DD
+  latitude?: number;
+  longitude?: number;
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+}
+
 export const bookingComApi = {
   /**
    * Search hotels via Booking.com Affiliate API
@@ -17,4 +30,11 @@ export const bookingComApi = {
    */
   search: (data: BookingSearchRequest) =>
     api.post<any>('/booking-com/search', data),
+
+  /**
+   * Book an accommodation from external live data
+   * POST /api/booking-com/book
+   */
+  book: (data: CreateExternalBookingRequest) =>
+    api.post<any>('/booking-com/book', data),
 };

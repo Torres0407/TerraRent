@@ -115,4 +115,11 @@ createProperty: (data: Partial<PropertyResponse>) => {
     const res = await api.get('/landlord/requests');
     return res.data;
   },
+
+  /**
+   * Delete a property
+   * DELETE /api/landlord/properties/{id}
+   */
+  deleteProperty: (id: string | number) => 
+    api.delete(`/landlord/properties/${id}`),
 };

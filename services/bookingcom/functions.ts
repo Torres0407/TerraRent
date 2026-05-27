@@ -1,4 +1,4 @@
-import { bookingComApi, BookingSearchRequest } from '../../api/endpoints/bookingCom';
+import { bookingComApi, BookingSearchRequest, CreateExternalBookingRequest } from '../../api/endpoints/bookingCom';
 
 /**
  * Booking.com Affiliate API Service
@@ -20,6 +20,19 @@ export const bookingComService = {
       return response.data;
     } catch (error) {
       console.error('❌ BookingCom API call failed:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Book an external accommodation
+   */
+  async bookAccommodation(request: CreateExternalBookingRequest): Promise<any> {
+    try {
+      const response = await bookingComApi.book(request);
+      return response.data;
+    } catch (error) {
+      console.error('❌ BookingCom API booking failed:', error);
       throw error;
     }
   },

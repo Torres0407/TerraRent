@@ -8,7 +8,7 @@ export const AmenitiesPage: React.FC = () => {
 
   // Group amenities by category (memoized for performance)
   const groupedAmenities = useMemo(() => {
-    return groupBy(amenities, 'category');
+    return groupBy(amenities, 'category') as Record<string, typeof amenities>;
   }, [amenities]);
 
   return (
@@ -35,7 +35,7 @@ export const AmenitiesPage: React.FC = () => {
                 <h2 className="text-2xl font-black text-primary uppercase tracking-widest">{category}</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {items.map(amenity => (
+                {(items as any[]).map(amenity => (
                   <div 
                     key={amenity.id} 
                     className="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-sm border border-primary/5 hover:shadow-lg hover:-translate-y-1 transition-all"

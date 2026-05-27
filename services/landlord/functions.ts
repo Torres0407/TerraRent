@@ -32,15 +32,14 @@ export const landlordService = {
    * Get single property by ID
    */
   async getPropertyById(id: number): Promise<PropertyResponse> {
-    const response = await myPropertiesApi.getById(id);
-    return response.data;
+    return landlordApi.getPropertyById(id);
   },
 
   /**
    * Create a new property listing
    */
   async createProperty(data: Partial<PropertyResponse>): Promise<PropertyResponse> {
-    const response = await myPropertiesApi.create(data);
+    const response = await landlordApi.createProperty(data);
     return response.data;
   },
 
@@ -48,7 +47,7 @@ export const landlordService = {
    * Update an existing property
    */
   async updateProperty(id: number, data: Partial<PropertyResponse>): Promise<PropertyResponse> {
-    const response = await myPropertiesApi.update(id, data);
+    const response = await landlordApi.updateProperty(id, data);
     return response.data;
   },
 
@@ -56,14 +55,14 @@ export const landlordService = {
    * Delete a property
    */
   async deleteProperty(id: number): Promise<void> {
-    await myPropertiesApi.delete(id);
+    await landlordApi.deleteProperty(id);
   },
 
   /**
    * Update property pricing
    */
   async updatePricing(id: number, price: number): Promise<PropertyResponse> {
-    const response = await landlordApi.updatePricing(id, price);
+    const response = await landlordApi.updatePricing(id, { price });
     return response.data;
   },
 

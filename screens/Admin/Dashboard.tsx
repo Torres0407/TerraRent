@@ -20,11 +20,11 @@ export const AdminDashboard: React.FC = () => {
         const transformedData = {
           stats: {
             totalRevenue: 0,
-            activeRentals: backendData.totalProperties || 0,
-            newUsers: backendData.totalUsers || 0,
-            queueItems: backendData.pendingVerifications + backendData.openReports || 0,
+            activeRentals: backendData.stats?.totalProperties || 0,
+            newUsers: backendData.stats?.totalUsers || 0,
+            queueItems: (backendData.stats?.pendingVerifications || 0) + (backendData.stats?.openReports || 0),
           },
-          topPerformingProperties: [],
+          topPerformingProperties: backendData.topPerformingProperties || [],
           recentActivities: [],
         };
         

@@ -4,70 +4,71 @@ import { Property, FAQItem, Feature, Amenity, ImageService, BeforeAfterImage, Pr
 export const PROPERTIES: Property[] = [
   {
     id: '1',
-    title: 'Tuscan Stone Villa',
-    location: 'Tuscany, Italy',
-    price: 350,
-    rating: 4.98,
-    image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=1000',
-    description: 'Immersed in the Chianti hills, this stone farmhouse offers a private pool and panoramic views.',
+    title: 'The Wheatbaker Mansion',
+    location: 'Ikoyi, Lagos, Nigeria',
+    price: 280,
+    rating: 4.95,
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1000',
+    description: 'Nestled in a peaceful sanctuary in Ikoyi, this premium boutique mansion features signature spa facilities and fine dining.',
     isSuperhost: true,
-    type: 'Villa',
-    coordinates: { lat: 43.7696, lng: 11.2558 }
+    type: 'Boutique Hotel',
+    coordinates: { lat: 6.4529, lng: 3.4411 }
   },
   {
     id: '2',
-    title: 'Nordic A-Frame',
-    location: 'Reykjavík, Iceland',
-    price: 220,
-    rating: 4.9,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000',
-    description: 'A minimalist wooden cabin perfect for viewing the northern lights from the comfort of a heated deck.',
-    type: 'Cabin',
-    coordinates: { lat: 64.1265, lng: -21.8174 }
+    title: 'Fraser Suites Penthouse',
+    location: 'Central Area, Abuja, Nigeria',
+    price: 340,
+    rating: 4.92,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1000',
+    description: 'An architectural penthouse showcasing floor-to-ceiling windows with panoramic views of the Abuja skyline and premium wellness suites.',
+    type: 'Penthouse',
+    coordinates: { lat: 9.0563, lng: 7.4985 }
   },
   {
     id: '3',
-    title: 'Joshua Tree Modern',
-    location: 'California, USA',
-    price: 450,
-    rating: 4.95,
+    title: 'Eko Pearl Luxury Condo',
+    location: 'Victoria Island, Lagos, Nigeria',
+    price: 410,
+    rating: 4.98,
     image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1000',
-    description: 'Ultra-modern architectural gem in the heart of the desert, featuring floor-to-ceiling windows.',
-    type: 'Modern',
-    coordinates: { lat: 34.1333, lng: -116.3131 }
+    description: 'High-rise waterfront glass residence overlooking the Atlantic ocean, complete with Olympic swimming pool and automated luxury suites.',
+    isSuperhost: true,
+    type: 'Luxury Condo',
+    coordinates: { lat: 6.4227, lng: 3.4285 }
   },
   {
     id: '4',
-    title: 'Ubud Eco Lodge',
-    location: 'Bali, Indonesia',
-    price: 180,
+    title: 'Obudu Mountain Chalet',
+    location: 'Obudu Plateau, Cross River, Nigeria',
+    price: 195,
     rating: 4.88,
-    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=1000',
-    description: 'Sustainable luxury tucked away in the lush jungles of Ubud, featuring an open-air bamboo structure.',
-    type: 'Lodge',
-    coordinates: { lat: -8.5069, lng: 115.2625 }
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000',
+    description: 'Perched in the lush clouds of Obudu, this cozy wooden mountain lodge is a perfect getaway featuring local fires and natural bird views.',
+    type: 'Chalet',
+    coordinates: { lat: 6.5312, lng: 9.3872 }
   },
   {
     id: '5',
-    title: 'The Aspen Loft',
-    location: 'Boulder, Colorado',
-    price: 240,
-    rating: 4.92,
+    title: 'Swiss International Palms Suite',
+    location: 'GRA Phase II, Port Harcourt, Nigeria',
+    price: 220,
+    rating: 4.9,
     image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000',
-    description: 'A cozy mountain loft with modern touches and immediate access to trailheads.',
-    type: 'Loft',
-    coordinates: { lat: 40.0150, lng: -105.2705 }
+    description: 'A modern, premium architectural suite situated in the clean, highly-secure heart of Port Harcourt with an elegant swimming garden.',
+    type: 'Executive Suite',
+    coordinates: { lat: 4.8156, lng: 7.0498 }
   },
   {
     id: '6',
-    title: 'Alpine Studio',
-    location: 'Vail, Colorado',
-    price: 190,
+    title: 'Bristol Palace Residence',
+    location: 'Tarauni, Kano, Nigeria',
+    price: 165,
     rating: 4.85,
     image: 'https://images.unsplash.com/photo-1449156001533-cb39c7324c60?auto=format&fit=crop&q=80&w=1000',
-    description: 'Perfect for solo adventurers or couples looking for a chic retreat near the slopes.',
-    type: 'Studio',
-    coordinates: { lat: 39.6403, lng: -106.3742 }
+    description: 'An elegant palace-style residence bringing premium service and cultural aesthetics to northern Nigeria in style.',
+    type: 'Apartment',
+    coordinates: { lat: 12.0022, lng: 8.5919 }
   }
 ];
 

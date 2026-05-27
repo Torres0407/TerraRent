@@ -1,5 +1,5 @@
 import { api } from '../client';
-import { PageResponse, PropertyFilterRequest, PropertyResponse } from '../types/responses';
+import { PageResponse, PropertyFilterRequest, PropertyResponse } from '../types';
 
 export const propertyApi = {
   /**

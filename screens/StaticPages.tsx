@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FAQS } from '../constants';
 
@@ -41,28 +40,27 @@ const About = () => (
         </div>
       </div>
     </section>
-  </main>
-);
 
-const HowItWorks = () => (
-  <main className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 space-y-32">
-    <section className="text-center">
-      <span className="text-accent font-black uppercase tracking-[0.3em] text-sm mb-4 block">The Journey</span>
-      <h2 className="text-4xl md:text-6xl font-black text-primary mb-12">Find your ground in three steps</h2>
-      <div className="grid gap-10 md:grid-cols-3">
-        {[
-          { icon: 'eco', title: '1. Discover', desc: 'Filter by eco-amenities, natural light scores, and proximity to wilderness.' },
-          { icon: 'verified_user', title: '2. Verify', desc: 'Immersive 3D tours and transparent landlord profiles ensure total peace of mind.' },
-          { icon: 'key', title: '3. Settle In', desc: 'Sign digital leases instantly and manage everything via our serene guest dashboard.' }
-        ].map((step, i) => (
-          <div key={i} className="group relative flex flex-col items-center text-center gap-6 rounded-[2.5rem] border border-primary/5 bg-white p-12 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-              <span className="material-symbols-outlined text-4xl">{step.icon}</span>
-            </div>
-            <h4 className="text-2xl font-black text-primary uppercase tracking-tight">{step.title}</h4>
-            <p className="text-neutral-500 text-lg leading-relaxed">{step.desc}</p>
-          </div>
-        ))}
+    {/* Integrated FAQ section */}
+    <section id="faq" className="w-full bg-white border-t border-primary/5 py-24 px-6 lg:px-20 scroll-mt-20">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col items-center text-center gap-4 mb-16">
+          <span className="text-accent font-black tracking-[0.3em] uppercase text-xs">Support Center</span>
+          <h2 className="text-primary text-4xl md:text-5xl font-black tracking-tighter text-center">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-4">
+          {FAQS.map((item, i) => (
+            <details key={i} className="group bg-background-light rounded-3xl border border-primary/5 shadow-sm overflow-hidden transition-all duration-300">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 p-8 list-none select-none">
+                <h3 className="text-primary text-xl font-bold group-hover:text-accent transition-colors">{item.question}</h3>
+                <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+              </summary>
+              <div className="px-8 pb-8 text-neutral-600 text-lg leading-relaxed border-t border-primary/5 pt-4">
+                <p>{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   </main>
@@ -104,28 +102,6 @@ const Pricing = () => (
         ))}
       </div>
     </section>
-  </main>
-);
-
-const FAQ = () => (
-  <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-20">
-    <div className="flex flex-col items-center text-center gap-4 mb-16">
-      <span className="text-accent font-black tracking-[0.3em] uppercase text-xs">Support Center</span>
-      <h1 className="text-primary text-4xl md:text-6xl font-black tracking-tighter">How can we help?</h1>
-    </div>
-    <div className="space-y-4">
-      {FAQS.map((item, i) => (
-        <details key={i} className="group bg-white rounded-3xl border border-primary/5 shadow-sm overflow-hidden transition-all duration-300">
-          <summary className="flex cursor-pointer items-center justify-between gap-4 p-8 list-none select-none">
-            <h3 className="text-primary text-xl font-bold group-hover:text-accent transition-colors">{item.question}</h3>
-            <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
-          </summary>
-          <div className="px-8 pb-8 text-neutral-600 text-lg leading-relaxed border-t border-primary/5 pt-4">
-            <p>{item.answer}</p>
-          </div>
-        </details>
-      ))}
-    </div>
   </main>
 );
 
@@ -186,4 +162,4 @@ const Contact = () => (
   </main>
 );
 
-export const StaticPages = { About, HowItWorks, Pricing, FAQ, Contact };
+export const StaticPages = { About, Pricing, Contact };

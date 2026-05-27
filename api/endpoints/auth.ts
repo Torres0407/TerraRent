@@ -6,7 +6,7 @@ import {
     ResendVerificationRequest,
     UserResponse,
     VerifyEmailRequest
-} from '../types/requests';
+} from '../types';
 
 export const authApi = {
   /**

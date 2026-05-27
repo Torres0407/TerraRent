@@ -1,7 +1,9 @@
+/// <reference types="vite/client" />
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
+
 // Base URL from environment or fallback
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://terrarent-backend.onrender.com/api';
 
 console.log('🔧 API Base URL:', API_BASE_URL);
 
