@@ -65,7 +65,21 @@ export default function HotelDetails() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const hotel = NIGERIAN_HOTELS[id || ''] || NIGERIAN_HOTELS['lag-1'];
+  const cleanedId = (id || '').trim().toLowerCase();
+  const hotel = NIGERIAN_HOTELS[cleanedId] || NIGERIAN_HOTELS['lag-1'] || {
+    id: 'fallback',
+    name: 'TerraRent Premium Stay',
+    address: 'Lagos, Nigeria',
+    city: 'Lagos',
+    price: 150,
+    rating: 9.0,
+    ratingText: 'Superb',
+    reviewsCount: 120,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800',
+    description: 'Experience pure luxury and comfort in one of our handpicked partner sanctuaries.',
+    latitude: 6.4529,
+    longitude: 3.4411
+  };
 
   // Parse dates
   const checkin = searchParams.get('checkin') || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -309,7 +323,7 @@ export default function HotelDetails() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
-                  ★ {hotel.rating.toFixed(1)} {hotel.ratingText} ({hotel.reviewsCount} verified reviews)
+                  ★ {(hotel.rating || 9.0).toFixed(1)} {hotel.ratingText || 'Superb'} ({(hotel.reviewsCount || 120)} verified reviews)
                 </div>
               </div>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-tight">
