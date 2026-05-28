@@ -66,7 +66,6 @@ const App: React.FC = () => {
           <Route path="/amenities" element={<AmenitiesPage />} />
           <Route path="/image-services" element={<ImageServicesPage />} />
           <Route path="/about" element={<StaticPages.About />} />
-          <Route path="/pricing" element={<StaticPages.Pricing />} />
           <Route path="/contact" element={<StaticPages.Contact />} />
 
           {/* Authentication Routes */}

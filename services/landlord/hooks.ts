@@ -5,6 +5,8 @@ import {
   LandlordDashboardResponse,
   PropertyResponse
 } from '../../api/types/responses';
+import { Property } from '../../types';
+import { mapPropertyResponseToProperty } from '../../utils/propertyMapper';
 import { landlordService } from './functions';
 import { authService } from '../auth/functions';
 
@@ -42,7 +44,7 @@ export const useLandlordDashboard = () => {
  * Hook to get landlord's properties
  */
 export const useLandlordProperties = () => {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +54,7 @@ export const useLandlordProperties = () => {
     
     try {
       const data = await landlordService.getProperties();
-      setProperties(data);
+      setProperties((data || []).map(mapPropertyResponseToProperty));
     } catch (err) {
       const errorMessage = handleApiError(err);
       setError(errorMessage);
@@ -83,7 +85,7 @@ export const useLandlordProperties = () => {
  * Hook to get single landlord property
  */
 export const useLandlordProperty = (id: number) => {
-  const [property, setProperty] = useState<PropertyResponse | null>(null);
+  const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,7 +96,7 @@ export const useLandlordProperty = (id: number) => {
       
       try {
         const data = await landlordService.getPropertyById(id);
-        setProperty(data);
+        setProperty(mapPropertyResponseToProperty(data));
       } catch (err) {
         const errorMessage = handleApiError(err);
         setError(errorMessage);

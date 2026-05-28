@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { handleApiError } from '../../api/client';
 import { PropertyFilterRequest } from '../../api/types/requests';
 import { PropertyResponse } from '../../api/types/responses';
+import { Property } from '../../types';
+import { mapPropertyResponseToProperty } from '../../utils/propertyMapper';
 import { propertyService } from './functions';
 
 /**
@@ -12,7 +14,7 @@ export const useProperties = (
   page: number = 0,
   size: number = 10
 ) => {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,7 +27,7 @@ export const useProperties = (
       
       try {
         const data = await propertyService.getProperties(filter, page, size);
-        setProperties(data.content);
+        setProperties((data.content || []).map(mapPropertyResponseToProperty));
         setTotalPages(data.totalPages);
         setTotalElements(data.totalElements);
       } catch (err) {
@@ -47,7 +49,7 @@ export const useProperties = (
  * Hook to fetch a single property by ID
  */
 export const useProperty = (id: string | number) => {
-  const [property, setProperty] = useState<PropertyResponse | null>(null);
+  const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ export const useProperty = (id: string | number) => {
       
       try {
         const data = await propertyService.getPropertyById(id);
-        setProperty(data);
+        setProperty(mapPropertyResponseToProperty(data));
       } catch (err) {
         const errorMessage = handleApiError(err);
         setError(errorMessage);
@@ -80,7 +82,7 @@ export const useProperty = (id: string | number) => {
  * Hook to search properties
  */
 export const usePropertySearch = () => {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,7 +92,7 @@ export const usePropertySearch = () => {
     
     try {
       const data = await propertyService.searchProperties(address);
-      setProperties(data);
+      setProperties((data || []).map(mapPropertyResponseToProperty));
     } catch (err) {
       const errorMessage = handleApiError(err);
       setError(errorMessage);
@@ -107,7 +109,7 @@ export const usePropertySearch = () => {
  * Hook to get featured properties for homepage
  */
 export const useFeaturedProperties = () => {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -118,7 +120,7 @@ export const useFeaturedProperties = () => {
       
       try {
         const data = await propertyService.getFeaturedProperties();
-        setProperties(data);
+        setProperties((data || []).map(mapPropertyResponseToProperty));
       } catch (err) {
         const errorMessage = handleApiError(err);
         setError(errorMessage);

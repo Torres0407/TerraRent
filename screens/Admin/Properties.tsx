@@ -3,6 +3,7 @@ import { adminApi } from '../../api/endpoints/admin';
 import { Property } from '../../types';
 import { AdminLayout } from './AdminLayout';
 import { useUpdatePropertyStatus } from '../../services/admin/hooks';
+import { mapPropertyResponseToProperty } from '../../utils/propertyMapper';
 
 export const AdminProperties: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -18,7 +19,7 @@ export const AdminProperties: React.FC = () => {
       setIsLoading(true);
       setError(null);
       const response = await adminApi.getProperties(statusFilter);
-      setProperties(response.data);
+      setProperties((response.data || []).map(mapPropertyResponseToProperty));
     } catch (err) {
       console.error("Failed to fetch admin properties:", err);
       setError("Failed to load properties.");

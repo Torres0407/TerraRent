@@ -1,5 +1,4 @@
 import React from 'react';
-import { FAQS } from '../constants';
 
 const About = () => (
   <main className="flex flex-col w-full">
@@ -41,69 +40,10 @@ const About = () => (
       </div>
     </section>
 
-    {/* Integrated FAQ section */}
-    <section id="faq" className="w-full bg-white border-t border-primary/5 py-24 px-6 lg:px-20 scroll-mt-20">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col items-center text-center gap-4 mb-16">
-          <span className="text-accent font-black tracking-[0.3em] uppercase text-xs">Support Center</span>
-          <h2 className="text-primary text-4xl md:text-5xl font-black tracking-tighter text-center">Frequently Asked Questions</h2>
-        </div>
-        <div className="space-y-4">
-          {FAQS.map((item, i) => (
-            <details key={i} className="group bg-background-light rounded-3xl border border-primary/5 shadow-sm overflow-hidden transition-all duration-300">
-              <summary className="flex cursor-pointer items-center justify-between gap-4 p-8 list-none select-none">
-                <h3 className="text-primary text-xl font-bold group-hover:text-accent transition-colors">{item.question}</h3>
-                <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
-              </summary>
-              <div className="px-8 pb-8 text-neutral-600 text-lg leading-relaxed border-t border-primary/5 pt-4">
-                <p>{item.answer}</p>
-              </div>
-            </details>
-          ))}
-        </div>
-      </div>
-    </section>
   </main>
 );
 
-const Pricing = () => (
-  <main className="relative flex flex-col">
-    <section className="w-full py-24 px-4 bg-sand-light/50">
-      <div className="container mx-auto max-w-4xl text-center space-y-6">
-        <h1 className="text-primary text-4xl md:text-7xl font-black tracking-tighter">Simple fees for <span className="text-accent">exceptional stays.</span></h1>
-        <p className="text-neutral-600 text-xl font-medium max-w-2xl mx-auto leading-relaxed">Whether you are listing a secluded forest cabin or booking a seaside retreat, our pricing is fully transparent.</p>
-      </div>
-    </section>
-    <section className="w-full px-4 pb-32 container mx-auto max-w-7xl -mt-10">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {[
-          { name: 'Travelers', fee: '0%', sub: 'Booking Fee', items: ['Global Access', 'AI Concierge', 'Insurance included'] },
-          { name: 'Hosts (Standard)', fee: '3%', sub: 'Per Booking', items: ['Automated payments', 'Guest vetting', 'Photography help'], featured: true },
-          { name: 'Hosts (Managed)', fee: '15%', sub: 'Per Booking', items: ['Key management', '24/7 check-in', 'Full maintenance'] }
-        ].map((plan, i) => (
-          <div key={i} className={`flex flex-col rounded-[2.5rem] bg-white p-12 shadow-2xl transition-all hover:scale-[1.02] border ${plan.featured ? 'border-primary shadow-primary/10' : 'border-primary/5 shadow-black/5'}`}>
-            <h3 className="text-primary text-xl font-black mb-8 uppercase tracking-widest">{plan.name}</h3>
-            <div className="mb-10 flex items-baseline gap-2">
-              <span className="text-primary text-7xl font-black">{plan.fee}</span>
-              <span className="text-neutral-500 font-bold uppercase text-xs">{plan.sub}</span>
-            </div>
-            <ul className="space-y-4 mb-10">
-              {plan.items.map(item => (
-                <li key={item} className="flex items-center gap-3 text-neutral-600 font-medium">
-                  <span className="material-symbols-outlined text-accent text-lg">check_circle</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <button className={`mt-auto w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${plan.featured ? 'bg-primary text-white shadow-xl shadow-primary/20 hover:bg-primary-dark' : 'bg-sand-light text-primary hover:bg-sand'}`}>
-              Get Started
-            </button>
-          </div>
-        ))}
-      </div>
-    </section>
-  </main>
-);
+
 
 const Contact = () => (
   <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-24">
@@ -162,4 +102,4 @@ const Contact = () => (
   </main>
 );
 
-export const StaticPages = { About, Pricing, Contact };
+export const StaticPages = { About, Contact };

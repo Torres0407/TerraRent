@@ -32,7 +32,7 @@ export const Login: React.FC = () => {
     } else if (userRole === "LANDLORD") {
       navigate("/landlord/dashboard");
     } else if (userRole === "RENTER") {
-      navigate("/dashboard");
+      navigate("/hotel-search");
     } else {
       console.error("Unknown role:", userRole);
     }

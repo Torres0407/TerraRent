@@ -35,9 +35,7 @@ const Navigation = () => {
           <Link to="/search" className={`text-sm transition-colors ${isActive('/search')}`}>Search</Link>
           <Link to="/map" className={`text-sm transition-colors ${isActive('/map')}`}>Map</Link>
           <Link to="/hotel-search" className={`text-sm transition-colors ${isActive('/hotel-search')}`}>Live Hotels</Link>
-          <Link to="/pricing" className={`text-sm transition-colors ${isActive('/pricing')}`}>Pricing</Link>
           <Link to="/about" className={`text-sm transition-colors ${isActive('/about')}`}>About</Link>
-          <Link to="/about#faq" className={`text-sm transition-colors ${location.hash === '#faq' ? 'text-accent font-bold' : 'text-primary hover:text-accent font-semibold'}`}>FAQ</Link>
           <Link to="/contact" className={`text-sm transition-colors ${isActive('/contact')}`}>Contact</Link>
     <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
@@ -76,10 +74,7 @@ const Navigation = () => {
       )}
 
       <Link to="/dashboard" className="block px-4 py-3 hover:bg-gray-50">
-        My Account
-      </Link>
-      <Link to="/hotel-search" className="block px-4 py-3 hover:bg-gray-50">
-        Live Hotels
+        User Dashboard
       </Link>
 
       <button
@@ -105,9 +100,7 @@ const Navigation = () => {
             { path: '/search', label: 'Search' },
             { path: '/map', label: 'Map' },
             { path: '/hotel-search', label: 'Live Hotels' },
-            { path: '/pricing', label: 'Pricing' },
             { path: '/about', label: 'About' },
-            { path: '/about#faq', label: 'FAQ' },
             { path: '/contact', label: 'Contact' }
           ].map((item) => (
             <Link key={item.path} to={item.path} className="text-base font-semibold text-primary capitalize" onClick={() => setIsMenuOpen(false)}>
@@ -121,7 +114,7 @@ const Navigation = () => {
   </>
 ) : (
   <>
-    <Link to="/dashboard" className="font-bold text-primary">My Account</Link>
+    <Link to="/dashboard" className="font-bold text-primary">User Dashboard</Link>
     {hasRole('LANDLORD') && (
       <Link to="/landlord/dashboard" className="font-bold text-primary">
         Landlord Dashboard
@@ -177,7 +170,6 @@ const Footer = () => {
           <div>
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-accent">Support</h3>
             <ul className="space-y-3 text-sm text-white/80">
-              <li><Link to="/about#faq" className="hover:text-white">Help Center / FAQ</Link></li>
               <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
               <li><a className="hover:text-white" href="#">Cancellation Options</a></li>
             </ul>

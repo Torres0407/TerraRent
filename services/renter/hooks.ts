@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { handleApiError } from '../../api/client';
 import { PropertyResponse, RenterDashboardResponse } from '../../api/types/responses';
+import { Property } from '../../types';
+import { mapPropertyResponseToProperty } from '../../utils/propertyMapper';
 import { renterService } from './functions';
 
 /**
@@ -37,7 +39,7 @@ export const useRenterDashboard = () => {
  * Hook to get saved properties
  */
 export const useSavedProperties = () => {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +49,7 @@ export const useSavedProperties = () => {
     
     try {
       const data = await renterService.getSavedProperties();
-      setProperties(data);
+      setProperties((data || []).map(mapPropertyResponseToProperty));
     } catch (err) {
       const errorMessage = handleApiError(err);
       setError(errorMessage);
