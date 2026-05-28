@@ -5,6 +5,7 @@ import { PropertyResponse } from '../../api/types/responses';
 import { Property } from '../../types';
 import { mapPropertyResponseToProperty } from '../../utils/propertyMapper';
 import { propertyService } from './functions';
+import { PROPERTIES } from '../../constants';
 
 /**
  * Hook to fetch all properties with filters and pagination
@@ -27,13 +28,22 @@ export const useProperties = (
       
       try {
         const data = await propertyService.getProperties(filter, page, size);
-        setProperties((data.content || []).map(mapPropertyResponseToProperty));
-        setTotalPages(data.totalPages);
-        setTotalElements(data.totalElements);
+        const mapped = (data.content || []).map(mapPropertyResponseToProperty);
+        if (mapped.length === 0 && page === 0) {
+          // Fallback to mock data if backend has no properties
+          setProperties(PROPERTIES);
+          setTotalPages(1);
+          setTotalElements(PROPERTIES.length);
+        } else {
+          setProperties(mapped);
+          setTotalPages(data.totalPages);
+          setTotalElements(data.totalElements);
+        }
       } catch (err) {
-        const errorMessage = handleApiError(err);
-        setError(errorMessage);
-        setProperties([]);
+        // Fallback to mock data on error (e.g. backend offline or empty database)
+        setProperties(PROPERTIES);
+        setTotalPages(1);
+        setTotalElements(PROPERTIES.length);
       } finally {
         setLoading(false);
       }
@@ -59,12 +69,30 @@ export const useProperty = (id: string | number) => {
       setError(null);
       
       try {
+        // If it's a numeric mock ID (or not a valid UUID format)
+        const isUuid = typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        if (!isUuid) {
+          // Find in mock data
+          const mockProp = PROPERTIES.find(p => p.id.toString() === id.toString());
+          if (mockProp) {
+            setProperty(mockProp);
+            setLoading(false);
+            return;
+          }
+        }
+
         const data = await propertyService.getPropertyById(id);
         setProperty(mapPropertyResponseToProperty(data));
       } catch (err) {
-        const errorMessage = handleApiError(err);
-        setError(errorMessage);
-        setProperty(null);
+        // Fallback to mock data if backend fetch fails
+        const mockProp = PROPERTIES.find(p => p.id.toString() === id.toString());
+        if (mockProp) {
+          setProperty(mockProp);
+        } else {
+          const errorMessage = handleApiError(err);
+          setError(errorMessage);
+          setProperty(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -92,11 +120,24 @@ export const usePropertySearch = () => {
     
     try {
       const data = await propertyService.searchProperties(address);
-      setProperties((data || []).map(mapPropertyResponseToProperty));
+      const mapped = (data || []).map(mapPropertyResponseToProperty);
+      if (mapped.length === 0) {
+        // Fallback to filtering mock properties by address keyword
+        const filteredMock = PROPERTIES.filter(p => 
+          p.location.toLowerCase().includes(address.toLowerCase()) ||
+          p.title.toLowerCase().includes(address.toLowerCase())
+        );
+        setProperties(filteredMock);
+      } else {
+        setProperties(mapped);
+      }
     } catch (err) {
-      const errorMessage = handleApiError(err);
-      setError(errorMessage);
-      setProperties([]);
+      // Fallback on error
+      const filteredMock = PROPERTIES.filter(p => 
+        p.location.toLowerCase().includes(address.toLowerCase()) ||
+        p.title.toLowerCase().includes(address.toLowerCase())
+      );
+      setProperties(filteredMock);
     } finally {
       setLoading(false);
     }
@@ -120,11 +161,14 @@ export const useFeaturedProperties = () => {
       
       try {
         const data = await propertyService.getFeaturedProperties();
-        setProperties((data || []).map(mapPropertyResponseToProperty));
+        const mapped = (data || []).map(mapPropertyResponseToProperty);
+        if (mapped.length === 0) {
+          setProperties(PROPERTIES.slice(0, 3)); // Fallback to first 3 mock properties
+        } else {
+          setProperties(mapped);
+        }
       } catch (err) {
-        const errorMessage = handleApiError(err);
-        setError(errorMessage);
-        setProperties([]);
+        setProperties(PROPERTIES.slice(0, 3));
       } finally {
         setLoading(false);
       }

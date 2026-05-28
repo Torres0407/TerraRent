@@ -6,7 +6,6 @@ import { Layout } from './components/Layout';
 import { AmenitiesPage } from './screens/AmenitiesPage';
 import { HomePage } from './screens/HomePage';
 import { ImageServicesPage } from './screens/ImageServicesPage';
-import { MapPage } from './screens/MapPage';
 import { PropertyDetails } from './screens/PropertyDetails';
 import { SearchPage } from './screens/SearchPage';
 import { StaticPages } from './screens/StaticPages';
@@ -61,7 +60,6 @@ const App: React.FC = () => {
           {/* Main App Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/map" element={<MapPage />} />
           <Route path="/property-details/:id" element={<PropertyDetails />} />
           <Route path="/amenities" element={<AmenitiesPage />} />
           <Route path="/image-services" element={<ImageServicesPage />} />

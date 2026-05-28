@@ -33,7 +33,6 @@ const Navigation = () => {
         
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/search" className={`text-sm transition-colors ${isActive('/search')}`}>Search</Link>
-          <Link to="/map" className={`text-sm transition-colors ${isActive('/map')}`}>Map</Link>
           <Link to="/hotel-search" className={`text-sm transition-colors ${isActive('/hotel-search')}`}>Live Hotels</Link>
           <Link to="/about" className={`text-sm transition-colors ${isActive('/about')}`}>About</Link>
           <Link to="/contact" className={`text-sm transition-colors ${isActive('/contact')}`}>Contact</Link>
@@ -98,7 +97,6 @@ const Navigation = () => {
         <div className="md:hidden absolute top-20 left-0 w-full bg-background-light border-b border-primary/10 shadow-xl py-4 px-4 flex flex-col gap-4">
           {[
             { path: '/search', label: 'Search' },
-            { path: '/map', label: 'Map' },
             { path: '/hotel-search', label: 'Live Hotels' },
             { path: '/about', label: 'About' },
             { path: '/contact', label: 'Contact' }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { bookingComService } from '../../services/bookingcom/functions';
 import { useAuth } from '../../context/AuthContext';
@@ -72,7 +72,7 @@ export default function HotelSearch() {
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [isSandboxSimulation, setIsSandboxSimulation] = useState(false);
-  const [activeTab, setActiveTab] = useState<'search' | 'featured'>('featured');
+  const [activeTab, setActiveTab] = useState<'search' | 'featured'>('search');
   const [priceFilter, setPriceFilter] = useState<number>(600);
   const [ratingFilter, setRatingFilter] = useState<number>(0);
   const [bookingHotel, setBookingHotel] = useState<Accommodation | null>(null);
@@ -107,33 +107,47 @@ export default function HotelSearch() {
         throw new Error(liveData.error || 'Mocking backend error');
       }
 
+      // Safe JSON parsing fallback in case of raw string response from Spring Boot
+      let parsedData = liveData;
+      if (typeof liveData === 'string') {
+        try {
+          parsedData = JSON.parse(liveData);
+        } catch (e) {
+          console.error("Failed to parse liveData string:", e);
+        }
+      }
+
       // Check if data formatting requires transformation
       let dataToMap: any[] = [];
-      if (Array.isArray(liveData)) {
-        dataToMap = liveData;
-      } else if (liveData && liveData.accommodations) {
-        dataToMap = liveData.accommodations;
+      if (Array.isArray(parsedData)) {
+        dataToMap = parsedData;
+      } else if (parsedData && parsedData.accommodations) {
+        dataToMap = parsedData.accommodations;
       } else {
         throw new Error('Empty payload from sandboxed endpoint');
       }
 
-      const mappedHotels = dataToMap.map((h: any) => ({
-        id: h.hotel_id || h.id,
-        name: h.name,
-        address: h.address,
-        city: h.city,
-        price: h.nightly_price || h.price || 0,
-        rating: h.rating || 0,
-        ratingText: h.rating >= 9 ? 'Exceptional' : h.rating >= 8.5 ? 'Superb' : h.rating >= 8 ? 'Very Good' : h.ratingText || 'Good',
-        reviewsCount: h.review_count || h.reviewsCount || 0,
-        image: h.primary_image || h.image,
-        tag: h.tag,
-        roomType: h.roomType,
-        cancellationFree: h.cancellationFree,
-        description: h.description,
-        latitude: h.latitude,
-        longitude: h.longitude,
-      }));
+      const mappedHotels = dataToMap.map((h: any) => {
+        const rawRating = h.rating || 0;
+        const scaledRating = rawRating <= 5 ? rawRating * 2 : rawRating;
+        return {
+          id: h.hotel_id || h.id,
+          name: h.name,
+          address: h.address,
+          city: h.city,
+          price: h.nightly_price || h.price || 0,
+          rating: scaledRating,
+          ratingText: scaledRating >= 9 ? 'Exceptional' : scaledRating >= 8.5 ? 'Superb' : scaledRating >= 8 ? 'Very Good' : h.ratingText || 'Good',
+          reviewsCount: h.review_count || h.reviewsCount || 0,
+          image: h.primary_image || h.image,
+          tag: h.tag,
+          roomType: h.roomType,
+          cancellationFree: h.cancellationFree,
+          description: h.description,
+          latitude: h.latitude,
+          longitude: h.longitude,
+        };
+      });
 
       setHotels(mappedHotels);
     } catch (err) {
@@ -160,6 +174,10 @@ export default function HotelSearch() {
       }, 750);
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   const handleFeaturedClick = (cityId: string) => {
     const updatedParams = { ...searchParams, cityId };

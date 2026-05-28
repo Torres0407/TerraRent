@@ -6,7 +6,7 @@ export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   
   // Use the property hook - automatically handles loading and error states
-  const { property, loading: isLoading, error } = useProperty(Number(id));
+  const { property, loading: isLoading, error } = useProperty(id || '');
   
   if (isLoading) {
     return (
